@@ -1,5 +1,5 @@
 import './App.css';
-import {buildMolecule, drawMolecule, findCentralAtoms} from './components/Molecule'
+import {buildMolecule, drawMolecule, findCentralAtoms, getCoordinates} from './components/Molecule'
 
 function App() {
   const molecule = buildMolecule();
@@ -9,6 +9,8 @@ function App() {
     let neighbourList = molecule.getNeighbours(atom);
     console.log("neigbours of ", atom.atomName, neighbourList);
   }
+  getCoordinates(molecule);
+  drawMolecule(molecule)
   
   return (
     <div className="App">
