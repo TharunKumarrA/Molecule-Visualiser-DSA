@@ -87,7 +87,8 @@
     if (parentAtom === null) {
       // Set coordinates for the first atom
       currentAtom.coordinates = [0, 0, 0];
-    } else {
+    }
+    else {
       // If last atom pushed stack is empty, the new atom will be shifted by bondlength to the x axis.
       if(assignedCoordinates.length === 0){
         let x = parentAtom.coordinates[0] + 1;
@@ -118,8 +119,8 @@
     }
 
     // Alkene Part - Yet has some logic to be implemented
-    console.log("Check: ", currentAtom, checkCentralVisited(centralVisited, centralAtoms), checkVisited(visited, molecule), checkNeighbourVisited(parentAtom, visited, molecule));
-    if(!centralAtoms.includes(currentAtom) && checkNeighbourVisited(parentAtom, visited, molecule)){
+    console.log("Check: ", currentAtom, checkCentralVisited(centralVisited, centralAtoms), checkVisited(visited, molecule));
+    if(!centralAtoms.includes(currentAtom) && currentAtom.atomSymbol !== 'H'){
       if(checkCentralVisited(centralVisited, centralAtoms) && checkVisited(visited, molecule)){
         let secondMaxHybrid = '';
         for (let atom of molecule.atomList){
@@ -160,15 +161,7 @@
     }
     return false;
   }
-
-  function checkNeighbourVisited(parentAtom, visited, molecule){
-    let neighbourList = molecule.getNeighbours(parentAtom);
-    for(let atom of neighbourList){
-      if(!visited.includes(atom)) return false;
-    }
-    return true;
-  }
-
+  
   export function drawMolecule(molecule){
 
   }
