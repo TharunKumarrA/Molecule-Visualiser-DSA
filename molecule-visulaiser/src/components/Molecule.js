@@ -53,14 +53,23 @@
     return centralAtoms;
   }
 
+  // Calculate Coordiantes of the atoms in 3D Plane.
   export function getCoordinates(molecule) {
+  
+  // Constant Angles defined for respective hybridisations.
   const angles = {
     "sp": Math.PI,
     "sp2": (2 * Math.PI) / 3,
-    "sp3": null, // We'll handle sp3 separately
+    "sp3": (73 * Math.PI) / 120, // We'll handle sp3 separately
   };
+
+  // Get Central Atoms of the Molecule.
   const centralAtoms = findCentralAtoms(molecule);
   let visited = [];
+  let centralVisited = [];
+  for(let atom of centralAtoms){
+    centralVisited[atom] = false;
+  }
   let queue = [];
   let initialAtom = centralAtoms[0];
   queue.push([initialAtom, null]);
@@ -71,52 +80,80 @@
     let [currentAtom, parentAtom] = queue.shift();
     let neighbours = molecule.getNeighbours(currentAtom);
 
-    if (currentAtom in centralAtoms) {
-      assignedCoordinates = [];
-    }
 
     if (parentAtom === null) {
+      // Set coordinates for the first atom
       currentAtom.coordinates = [0, 0, 0];
     } else {
-      if (parentAtom.hybridisation === "sp3") {
-        // Special case for sp3 hybridization
-        let bondLength = 1;
-        let numNeighbours = assignedCoordinates.length;
-        let phi = Math.acos(-1 / 3);
-        let theta = (Math.PI * (numNeighbours + 1)) / (numNeighbours + (5 / 4));
-        let x = bondLength * Math.sin(theta) * Math.cos(phi);
-        let y = bondLength * Math.sin(theta) * Math.sin(phi);
-        let z = bondLength * Math.cos(theta);
+      // If last atom pushed stack is empty, the new atom will be shifted by bondlength to the x axis.
+      if(assignedCoordinates.length === 0){
+        let x = parentAtom.coordinates[0] + 1;
+        let y = parentAtom.coordinates[1];
+        let z = parentAtom.coordinates[2];
         currentAtom.coordinates = [x, y, z];
         assignedCoordinates.push([x, y, z]);
-      } else {
-        if (assignedCoordinates.length === 0) {
-          let x = parentAtom.coordinates[0] + 1;
-          let y = parentAtom.coordinates[1];
-          let z = parentAtom.coordinates[2];
-          currentAtom.coordinates = [x, y, z];
-          assignedCoordinates.push([x, y, z]);
-        } else {
-          let bondLength = 1;
-          let lastCoord = assignedCoordinates[assignedCoordinates.length - 1];
-          let angle = angles[parentAtom.hybridisation] / (assignedCoordinates.length - 1);
-          let newX = lastCoord[0] + bondLength * Math.cos(angle);
-          let newY = lastCoord[1] + bondLength * Math.sin(angle);
-          let newZ = lastCoord[2];
-          currentAtom.coordinates = [newX, newY, newZ];
-          assignedCoordinates.push([newX, newY, newZ]);
-        }
+      }
+      // Coordinates will be calculated using bondlength and last coordinates pushed to the stack
+      else{
+        let bondLength = 1;
+        let lastCoord = assignedCoordinates[assignedCoordinates.length - 1];
+        let angle = angles[parentAtom.hybridisation];
+        let newX = lastCoord[0] + bondLength * Math.cos(angle);
+        let newY = lastCoord[1] + bondLength * Math.sin(angle);
+        let newZ = lastCoord[2] + bondLength * Math.cos(angle) * Math.sin(angle);
+        currentAtom.coordinates = [newX, newY, newZ];
+        assignedCoordinates.push([newX, newY, newZ]);
       }
     }
 
+    // Pushes all neighbours of the currentatom to the queue.
     for (let neighbour of neighbours) {
       if (!visited.includes(neighbour)) {
         queue.push([neighbour, currentAtom]);
         visited.push(neighbour);
       }
     }
+
+    // Alkene Part - Yet has some logic to be implemented
+    if(!centralAtoms.includes(currentAtom) && currentAtom.atomSymbol !== 'H'){
+      if(checkCentralVisited(centralVisited, centralAtoms) && checkVisited(visited, molecule)){
+        let secondMaxHybrid = '';
+        for (let atom of molecule.atomList){
+          if (atom.hybridisation > secondMaxHybrid){
+            secondMaxHybrid = atom.hybridisation;
+          }
+        }
+        for (let atom of molecule.atomList){
+          if (atom.hybridisation === secondMaxHybrid){
+            centralAtoms.push(atom);
+          }
+        }
+      }
+    }
+
+    // Updating the stack to be empty if current atom is a central atom
+    if (centralAtoms.includes(currentAtom)) {
+      centralVisited[currentAtom] = true;
+      assignedCoordinates = [];
+    }
   }
 }
+
+  // Returns true if central atoms list doesnt have any atom yet to be visited.
+  function checkCentralVisited(centralVisited, centralAtoms){
+    for(let atom of centralAtoms){
+      if(!centralVisited[atom]) return false;
+    }
+    return true;
+  }
+
+  // Returns true if any of the atom is still yet to be visited.
+  function checkVisited(visited, molecule){
+    for(let atom of molecule.atomList){
+      if(!visited[atom]) return true;
+    }
+    return false;
+  }
 
   export function drawMolecule(molecule){
     console.log(molecule);
