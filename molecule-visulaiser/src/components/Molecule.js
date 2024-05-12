@@ -1,13 +1,13 @@
   import {Molecule, atomNode} from './GraphADT.js'
 
   export function buildMolecule(){
-    const atom1 = new atomNode("C1", "sp2", "C");
+    const atom1 = new atomNode("C1", "sp3", "C");
     const atom2 = new atomNode("H1", "sp", "H");
     const atom3 = new atomNode("H2", "sp", "H");
     const atom4 = new atomNode("H3", "sp", "H");
     const atom5 = new atomNode("C2", "sp2", "C");
     const atom6 = new atomNode("H4", "sp", "H");
-    const atom7 = new atomNode("C3", "sp3", "C");
+    const atom7 = new atomNode("C3", "sp2", "C");
     const atom8 = new atomNode("H5", "sp", "H");
     const atom9 = new atomNode("H6", "sp", "H");
 
@@ -118,7 +118,8 @@
     }
 
     // Alkene Part - Yet has some logic to be implemented
-    if(!centralAtoms.includes(currentAtom)){
+    console.log("Check: ", currentAtom, checkCentralVisited(centralVisited, centralAtoms), checkVisited(visited, molecule), checkNeighbourVisited(parentAtom, visited, molecule));
+    if(!centralAtoms.includes(currentAtom) && checkNeighbourVisited(parentAtom, visited, molecule)){
       if(checkCentralVisited(centralVisited, centralAtoms) && checkVisited(visited, molecule)){
         let secondMaxHybrid = '';
         for (let atom of molecule.atomList){
@@ -128,7 +129,7 @@
         }
         console.log("New MAX Hybridisation: ", secondMaxHybrid);
         for (let atom of molecule.atomList){
-          if (atom.hybridisation === secondMaxHybrid && !visited.includes(atom)){
+          if (atom.hybridisation === secondMaxHybrid){
             centralAtoms.push(atom);
           }
         }
@@ -147,9 +148,9 @@
   // Returns true if central atoms list doesnt have any atom yet to be visited.
   function checkCentralVisited(centralVisited, centralAtoms){
     for(let atom of centralAtoms){
-      if(!centralVisited.includes(atom)) return false;
+      if(!centralVisited.includes(atom)) return true;
     }
-    return true;
+    return false;
   }
 
   // Returns true if any of the atom is still yet to be visited.
