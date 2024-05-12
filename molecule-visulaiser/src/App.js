@@ -8,9 +8,9 @@ function App() {
     const molecule = buildMolecule();
     getCoordinates(molecule);
 
-    for(let atoms of molecule.atomList){
-      console.log(atoms);
-    }
+    // for(let atoms of molecule.atomList){
+    //   console.log(atoms);
+    // }
 
     // Extract coordinates
     const atoms = molecule.atomList;
@@ -27,9 +27,9 @@ function App() {
     const y = unpack(atomCoordinates, 1);
     const z = unpack(atomCoordinates, 2);
 
-    console.log('X Coordinates:', x);
-    console.log('Y Coordinates:', y);
-    console.log('Z Coordinates:', z);
+    // console.log('X Coordinates:', x);
+    // console.log('Y Coordinates:', y);
+    // console.log('Z Coordinates:', z);
 
     const trace1 = {
       x: x,
@@ -68,8 +68,8 @@ function App() {
     const data = [trace1, trace2];
     const layout = { margin: { l: 0, r: 0, b: 0, t: 0 } };
 
-    console.log('Data:', data);
-    console.log('Layout:', layout);
+    // console.log('Data:', data);
+    // console.log('Layout:', layout);
 
     Plotly.newPlot('scene-container', data, layout);
 

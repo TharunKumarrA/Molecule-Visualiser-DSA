@@ -1,15 +1,15 @@
   import {Molecule, atomNode} from './GraphADT.js'
 
   export function buildMolecule(){
-    const atom1 = new atomNode("C1", "sp3", "C");
+    const atom1 = new atomNode("C1", "sp2", "C");
     const atom2 = new atomNode("H1", "sp", "H");
     const atom3 = new atomNode("H2", "sp", "H");
     const atom4 = new atomNode("H3", "sp", "H");
     const atom5 = new atomNode("C2", "sp2", "C");
     const atom6 = new atomNode("H4", "sp", "H");
-    const atom7 = new atomNode("N1", "sp2", "N");
-    const atom8 = new atomNode("O1", "sp2", "O");
-    const atom9 = new atomNode("O2", "sp2", "O");
+    const atom7 = new atomNode("C3", "sp3", "C");
+    const atom8 = new atomNode("H5", "sp", "H");
+    const atom9 = new atomNode("H6", "sp", "H");
 
     const molecule = new Molecule();
     molecule.addAtoms(atom1);
@@ -101,9 +101,9 @@
         let bondLength = 1;
         let lastCoord = assignedCoordinates[assignedCoordinates.length - 1];
         let angle = angles[parentAtom.hybridisation];
-        let newX = lastCoord[0] + bondLength * Math.cos(angle);
-        let newY = lastCoord[1] + bondLength * Math.sin(angle);
-        let newZ = lastCoord[2] + bondLength * Math.cos(angle) * Math.sin(angle);
+        const newX = lastCoord[0] + bondLength * Math.cos(angle);
+        const newY = lastCoord[1] + bondLength * Math.sin(angle);
+        const newZ = lastCoord[2]; // Benzene lies in a plane, so set z-coordinate to zero
         currentAtom.coordinates = [newX, newY, newZ];
         assignedCoordinates.push([newX, newY, newZ]);
       }
@@ -118,7 +118,7 @@
     }
 
     // Alkene Part - Yet has some logic to be implemented
-    if(!centralAtoms.includes(currentAtom) && currentAtom.atomSymbol !== "H"){
+    if(!centralAtoms.includes(currentAtom)){
       if(checkCentralVisited(centralVisited, centralAtoms) && checkVisited(visited, molecule)){
         let secondMaxHybrid = '';
         for (let atom of molecule.atomList){
@@ -126,8 +126,9 @@
             secondMaxHybrid = atom.hybridisation;
           }
         }
+        console.log("New MAX Hybridisation: ", secondMaxHybrid);
         for (let atom of molecule.atomList){
-          if (atom.hybridisation === secondMaxHybrid && !visited[atom]){
+          if (atom.hybridisation === secondMaxHybrid && !visited.includes(atom)){
             centralAtoms.push(atom);
           }
         }
@@ -146,7 +147,7 @@
   // Returns true if central atoms list doesnt have any atom yet to be visited.
   function checkCentralVisited(centralVisited, centralAtoms){
     for(let atom of centralAtoms){
-      if(!centralVisited[atom]) return false;
+      if(!centralVisited.includes(atom)) return false;
     }
     return true;
   }
@@ -154,11 +155,19 @@
   // Returns true if any of the atom is still yet to be visited.
   function checkVisited(visited, molecule){
     for(let atom of molecule.atomList){
-      if(!visited[atom]) return true;
+      if(!visited.includes(atom)) return true;
     }
     return false;
   }
 
+  function checkNeighbourVisited(parentAtom, visited, molecule){
+    let neighbourList = molecule.getNeighbours(parentAtom);
+    for(let atom of neighbourList){
+      if(!visited.includes(atom)) return false;
+    }
+    return true;
+  }
+
   export function drawMolecule(molecule){
-    console.log(molecule);
+
   }
