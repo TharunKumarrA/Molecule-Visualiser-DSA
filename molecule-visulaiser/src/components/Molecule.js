@@ -5,10 +5,11 @@
     const atom2 = new atomNode("H1", "sp", "H");
     const atom3 = new atomNode("H2", "sp", "H");
     const atom4 = new atomNode("H3", "sp", "H");
-    const atom5 = new atomNode("C2", "sp3", "C");
+    const atom5 = new atomNode("C2", "sp2", "C");
     const atom6 = new atomNode("H4", "sp", "H");
-    const atom7 = new atomNode("H5", "sp", "H");
-    const atom8 = new atomNode("H6", "sp", "H");
+    const atom7 = new atomNode("N1", "sp2", "N");
+    const atom8 = new atomNode("O1", "sp2", "O");
+    const atom9 = new atomNode("O2", "sp2", "O");
 
     const molecule = new Molecule();
     molecule.addAtoms(atom1);
@@ -19,6 +20,7 @@
     molecule.addAtoms(atom6);
     molecule.addAtoms(atom7);
     molecule.addAtoms(atom8);
+    molecule.addAtoms(atom9);
 
 
     molecule.addBond(atom1, atom2);
@@ -27,7 +29,8 @@
     molecule.addBond(atom1, atom5);
     molecule.addBond(atom5, atom6);
     molecule.addBond(atom5, atom7);
-    molecule.addBond(atom5, atom8);
+    molecule.addBond(atom7, atom8);
+    molecule.addBond(atom7, atom9);
 
     return molecule;
   }
@@ -115,16 +118,16 @@
     }
 
     // Alkene Part - Yet has some logic to be implemented
-    if(!centralAtoms.includes(currentAtom) && currentAtom.atomSymbol !== 'H'){
+    if(!centralAtoms.includes(currentAtom) && currentAtom.atomSymbol !== "H"){
       if(checkCentralVisited(centralVisited, centralAtoms) && checkVisited(visited, molecule)){
         let secondMaxHybrid = '';
         for (let atom of molecule.atomList){
-          if (atom.hybridisation > secondMaxHybrid){
+          if (atom.hybridisation > secondMaxHybrid && atom.hybridisation < centralAtoms[0].hybridisation){
             secondMaxHybrid = atom.hybridisation;
           }
         }
         for (let atom of molecule.atomList){
-          if (atom.hybridisation === secondMaxHybrid){
+          if (atom.hybridisation === secondMaxHybrid && !visited[atom]){
             centralAtoms.push(atom);
           }
         }
@@ -137,6 +140,7 @@
       assignedCoordinates = [];
     }
   }
+  console.log("New Central Atoms: ", centralAtoms);
 }
 
   // Returns true if central atoms list doesnt have any atom yet to be visited.
