@@ -28,7 +28,7 @@
     molecule.addBond(atom1, atom4);
     molecule.addBond(atom1, atom5);
     molecule.addBond(atom5, atom6);
-    molecule.addBond(atom5, atom7);
+    molecule.addBond(atom5, atom7, true);
     molecule.addBond(atom7, atom8);
     molecule.addBond(atom7, atom9);
 
@@ -142,8 +142,13 @@
       centralVisited[currentAtom] = true;
       assignedCoordinates = [];
     }
+
+    // Setting the connections property for the current atom
+    currentAtom.connections = neighbours;
   }
   console.log("New Central Atoms: ", centralAtoms);
+
+  
 }
 
   // Returns true if central atoms list doesnt have any atom yet to be visited.
