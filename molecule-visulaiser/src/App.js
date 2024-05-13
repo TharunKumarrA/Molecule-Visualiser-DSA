@@ -19,9 +19,9 @@ const MoleculeVisualizer = () => {
       color: molecule.atomList.map(atom => {
         switch (atom.atomSymbol) {
           case 'C':
-            return 'blue';
+            return 'black';
           case 'H':
-            return 'green';
+            return 'blue';
           default:
             return 'red';
         }
