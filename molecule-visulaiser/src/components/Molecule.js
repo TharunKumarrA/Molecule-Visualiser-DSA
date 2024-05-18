@@ -1,16 +1,15 @@
 import { Molecule, atomNode } from "./GraphADT.js";
 
 export function buildMolecule() {
-  const atom1 = new atomNode("C1", "sp2", "C");
+  const atom1 = new atomNode("C1", "sp3", "C");
   const atom2 = new atomNode("H1", "sp", "H");
   const atom3 = new atomNode("H2", "sp", "H");
   const atom4 = new atomNode("H3", "sp", "H");
-  const atom5 = new atomNode("C4", "sp2", "C");
+  const atom5 = new atomNode("C2", "sp2", "C");
   const atom6 = new atomNode("H4", "sp", "H");
-  const atom7 = new atomNode("H5", "sp", "H");
-  const atom8 = new atomNode("C6", "sp2", "C");
+  const atom7 = new atomNode("C3", "sp2", "C");
+  const atom8 = new atomNode("H5", "sp", "H");
   const atom9 = new atomNode("H6", "sp", "H");
-  const atom10 = new atomNode("H5", "sp", "H");
 
   const molecule = new Molecule();
 
@@ -23,17 +22,15 @@ export function buildMolecule() {
   molecule.addAtoms(atom7);
   molecule.addAtoms(atom8);
   molecule.addAtoms(atom9);
-  molecule.addAtoms(atom10);
 
-  molecule.addBond(atom1, atom5);
   molecule.addBond(atom1, atom2);
   molecule.addBond(atom1, atom3);
   molecule.addBond(atom1, atom4);
-  molecule.addBond(atom5, atom8);
+  molecule.addBond(atom1, atom5);
   molecule.addBond(atom5, atom6);
   molecule.addBond(atom5, atom7);
-  molecule.addBond(atom8, atom9);
-  molecule.addBond(atom8, atom10);
+  molecule.addBond(atom7, atom8);
+  molecule.addBond(atom7, atom9);
   return molecule;
 }
 
@@ -136,7 +133,10 @@ export function getCoordinates(molecule) {
               initalDirection[2] * (Math.cos(angleX) * Math.cos(angleY)),
           ];
 
-          if(parentAtom.hybridisation === 'sp2'){
+          if(parentAtom.hybridisation === 'sp2' && currentAtom.atomSymbol === 'C'){
+            newDirection = rotateVectorAroundXYPlane(initalDirection, -120);
+          }
+          else if(parentAtom.hybridisation === 'sp2' && currentAtom.atomSymbol === 'H'){
             newDirection = rotateVectorAroundXYPlane(initalDirection, 120);
           }
           if(initalDirection[0] === 1 && initalDirection[1] === 0 && initalDirection[2] === 0) directionVectorStack.pop();
@@ -236,9 +236,10 @@ export function getCoordinates(molecule) {
         }
       }
     }
+    console.log("New Central Atoms: ", centralAtoms);
 
     // Updating the stack to be empty if current atom is a central atom
-    if (centralAtoms.includes(currentAtom) && parentAtom !== null) {
+    if (centralAtoms.includes(currentAtom)) {
       centralVisited[currentAtom] = true;
       let temp = directionVectorStack[directionVectorStack.length - 1];
       directionVectorStack = [];
@@ -247,8 +248,9 @@ export function getCoordinates(molecule) {
 
     // Setting the connections property for the current atom
     currentAtom.connections = neighbours;
+
+    console.log("Current Direct Vectro Stack: ", directionVectorStack);
   }
-  console.log("New Central Atoms: ", centralAtoms);
 }
 
 // Returns true if central atoms list doesnt have any atom yet to be visited.
@@ -454,4 +456,38 @@ function CalcThirdCoordinate(coord1, coord2, angle1, angle2) {
 
   // Return the third coordinate
   return [x + coord2[0], y + coord2[1], coord2[2]];
+}
+
+function calculateThirdCoordinate(p1, p2) {
+  const [x1, y1, z1] = p1;
+  const [x2, y2, z2] = p2;
+
+  // Calculate the vectors from the origin to p1 and p2
+  const v1 = [x1, y1];
+  const v2 = [x2, y2];
+
+  // Calculate the rotation angle of 120 degrees in radians
+  const angle = (120 * Math.PI) / 180;
+
+  // Calculate the rotated vectors
+  const v3 = rotateVector(v1, angle);
+  const v4 = rotateVector(v2, -angle);
+
+  // Calculate the third coordinate as the average of the rotated vectors
+  const x3 = (v3[0] + v4[0]) / 2;
+  const y3 = (v3[1] + v4[1]) / 2;
+  const z3 = (z1 + z2) / 2; // Assuming the same z-coordinate as the average of p1 and p2
+
+  return [x3, y3, z3];
+}
+
+function rotateVector(v, angle) {
+  const [x, y] = v;
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  const xRotated = x * cos - y * sin;
+  const yRotated = x * sin + y * cos;
+
+  return [xRotated, yRotated];
 }
