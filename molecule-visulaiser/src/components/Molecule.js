@@ -1,18 +1,15 @@
 import { Molecule, atomNode } from "./GraphADT.js";
 
 export function buildMolecule() {
-  const atom1 = new atomNode("C1", "sp2", "C");
+  const atom1 = new atomNode("C1", "sp3", "C");
   const atom2 = new atomNode("H1", "sp", "H");
-  const atom3 = new atomNode("C2", "sp2", "C");
-  const atom4 = new atomNode("H2", "sp", "H");
-  const atom5 = new atomNode("C3", "sp2", "C");
-  const atom6 = new atomNode("H3", "sp", "H");
-  const atom7 = new atomNode("C4", "sp2", "C");
-  const atom8 = new atomNode("H4", "sp", "H");
-  const atom9 = new atomNode("C5", "sp2", "C");
-  const atom10 = new atomNode("H5", "sp", "H");
-  const atom11 = new atomNode("C6", "sp2", "C");
-  const atom12 = new atomNode("H6", "sp", "H");
+  const atom3 = new atomNode("H2", "sp", "H");
+  const atom4 = new atomNode("H3", "sp", "H");
+  const atom5 = new atomNode("C2", "sp2", "C");
+  const atom6 = new atomNode("H4", "sp", "H");
+  const atom7 = new atomNode("C3", "sp2", "C");
+  const atom8 = new atomNode("H5", "sp", "H");
+  const atom9 = new atomNode("H6", "sp", "H");
 
   const molecule = new Molecule();
 
@@ -25,22 +22,18 @@ export function buildMolecule() {
   molecule.addAtoms(atom7);
   molecule.addAtoms(atom8);
   molecule.addAtoms(atom9);
-  molecule.addAtoms(atom10);
-  molecule.addAtoms(atom11);
-  molecule.addAtoms(atom12);
 
   molecule.addBond(atom1, atom2);
   molecule.addBond(atom1, atom3);
-  molecule.addBond(atom3, atom4);
-  molecule.addBond(atom3, atom5);
+  molecule.addBond(atom1, atom4);
+  molecule.addBond(atom1, atom5);
+
   molecule.addBond(atom5, atom6);
   molecule.addBond(atom5, atom7);
+  
   molecule.addBond(atom7, atom8);
   molecule.addBond(atom7, atom9);
-  molecule.addBond(atom9, atom10);
-  molecule.addBond(atom9, atom11);
-  molecule.addBond(atom11, atom12);
-  molecule.addBond(atom11, atom1);
+
   return molecule;
 }
 

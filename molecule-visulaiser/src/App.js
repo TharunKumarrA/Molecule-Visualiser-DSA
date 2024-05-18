@@ -14,16 +14,16 @@ const MoleculeVisualizer = () => {
     y: molecule.atomList.map((atom) => atom.coordinates[1]),
     z: molecule.atomList.map((atom) => atom.coordinates[2]),
     marker: {
-      size: 10,
+      size: 12,
       opacity: 0.8,
-      color: molecule.atomList.map(atom => {
+      color: molecule.atomList.map((atom) => {
         switch (atom.atomSymbol) {
           case 'C':
             return 'black';
           case 'H':
-            return '#4682B4';
+            return '#87CEEB'; // Medium Light Blue
           default:
-            return '#CD5C5C';
+            return '#CD5C5C'; // Indian Red
         }
       }),
     },
@@ -55,16 +55,6 @@ const MoleculeVisualizer = () => {
 
   // Add connections data to traceSingleBonds and traceDoubleBonds
   molecule.atomList.forEach((atom) => {
-    atom.connections.forEach(connectedAtom => {
-      const connectedIndex = molecule.atomList.findIndex(a => a.atomName === connectedAtom.atomName);
-      traceConnections.x.push(atom.coordinates[0], molecule.atomList[connectedIndex].coordinates[0], null);
-      traceConnections.y.push(atom.coordinates[1], molecule.atomList[connectedIndex].coordinates[1], null);
-      traceConnections.z.push(atom.coordinates[2], molecule.atomList[connectedIndex].coordinates[2], null);
-  
-      if (atom.isDoubleBond) {
-        traceConnections.x.push(atom.coordinates[0], molecule.atomList[connectedIndex].coordinates[0], null);
-        traceConnections.y.push(atom.coordinates[1], molecule.atomList[connectedIndex].coordinates[1], null);
-        traceConnections.z.push(atom.coordinates[2], molecule.atomList[connectedIndex].coordinates[2], null);
     const atomConnections = molecule.adjacencyList[atom.atomName];
     atomConnections.forEach((connection) => {
       const connectedAtom = molecule.atomList.find(
@@ -138,10 +128,8 @@ const MoleculeVisualizer = () => {
 
   return (
     <Plot
-      data={[traceAtoms, traceConnections]}
-      layout={layout}
       data={[traceAtoms, traceSingleBonds, traceDoubleBonds]}
-      layout={{ margin: { l: 0, r: 0, b: 0, t: 0 } }}
+      layout={layout}
       style={{ width: '100%', height: '100vh' }}
     />
   );
