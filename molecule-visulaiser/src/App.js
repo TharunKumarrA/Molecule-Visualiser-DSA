@@ -74,6 +74,7 @@ const MoleculeVisualizer = () => {
       );
 
       if (connection.isDoubleBond) {
+        // Main line
         traceDoubleBonds.x.push(
           atom.coordinates[0],
           connectedAtom.coordinates[0],
@@ -87,6 +88,23 @@ const MoleculeVisualizer = () => {
         traceDoubleBonds.z.push(
           atom.coordinates[2],
           connectedAtom.coordinates[2],
+          null
+        );
+
+        // Offset line
+        traceDoubleBonds.x.push(
+          atom.coordinates[0] + 0.1,
+          connectedAtom.coordinates[0] + 0.1,
+          null
+        );
+        traceDoubleBonds.y.push(
+          atom.coordinates[1] + 0.1,
+          connectedAtom.coordinates[1] + 0.1,
+          null
+        );
+        traceDoubleBonds.z.push(
+          atom.coordinates[2] + 0.1,
+          connectedAtom.coordinates[2] + 0.1,
           null
         );
       } else if (connection.isSingleBond && !connection.isTripleBond) {
@@ -106,6 +124,7 @@ const MoleculeVisualizer = () => {
           null
         );
       } else if (connection.isTripleBond) {
+        // Main line
         traceTripleBonds.x.push(
           atom.coordinates[0],
           connectedAtom.coordinates[0],
@@ -119,6 +138,39 @@ const MoleculeVisualizer = () => {
         traceTripleBonds.z.push(
           atom.coordinates[2],
           connectedAtom.coordinates[2],
+          null
+        );
+
+        // Offset lines
+        traceTripleBonds.x.push(
+          atom.coordinates[0] + 0.1,
+          connectedAtom.coordinates[0] + 0.1,
+          null
+        );
+        traceTripleBonds.y.push(
+          atom.coordinates[1] + 0.1,
+          connectedAtom.coordinates[1] + 0.1,
+          null
+        );
+        traceTripleBonds.z.push(
+          atom.coordinates[2] + 0.1,
+          connectedAtom.coordinates[2] + 0.1,
+          null
+        );
+
+        traceTripleBonds.x.push(
+          atom.coordinates[0] - 0.1,
+          connectedAtom.coordinates[0] - 0.1,
+          null
+        );
+        traceTripleBonds.y.push(
+          atom.coordinates[1] - 0.1,
+          connectedAtom.coordinates[1] - 0.1,
+          null
+        );
+        traceTripleBonds.z.push(
+          atom.coordinates[2] - 0.1,
+          connectedAtom.coordinates[2] - 0.1,
           null
         );
       }
