@@ -5,7 +5,6 @@ export class atomNode {
     this.atomSymbol = atomSymbol;
     this.coordinates = [0, 0, 0];
     this.connections = [];
-    this.isDoubleBond = false; // Default value
   }
 }
 

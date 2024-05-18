@@ -1,6 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import { buildMolecule, getCoordinates } from './components/Molecule'; // Assuming this is the correct path to your molecule construction functions
+import { buildMolecule, getCoordinates } from './components/Molecule';
 
 const MoleculeVisualizer = () => {
   const molecule = buildMolecule();
