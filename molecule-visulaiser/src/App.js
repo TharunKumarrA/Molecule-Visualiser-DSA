@@ -21,9 +21,9 @@ const MoleculeVisualizer = () => {
           case 'C':
             return 'black';
           case 'H':
-            return 'blue';
+            return '#4682B4';
           default:
-            return 'red';
+            return '#CD5C5C';
         }
       }),
     },
@@ -37,8 +37,6 @@ const MoleculeVisualizer = () => {
     z: [],
   };
 
-  // Add connections data to traceConnections
-  // Modify traceConnections calculation
   molecule.atomList.forEach((atom) => {
     atom.connections.forEach(connectedAtom => {
       const connectedIndex = molecule.atomList.findIndex(a => a.atomName === connectedAtom.atomName);
@@ -46,7 +44,6 @@ const MoleculeVisualizer = () => {
       traceConnections.y.push(atom.coordinates[1], molecule.atomList[connectedIndex].coordinates[1], null);
       traceConnections.z.push(atom.coordinates[2], molecule.atomList[connectedIndex].coordinates[2], null);
   
-      // If isDoubleBond is true, add an additional connection
       if (atom.isDoubleBond) {
         traceConnections.x.push(atom.coordinates[0], molecule.atomList[connectedIndex].coordinates[0], null);
         traceConnections.y.push(atom.coordinates[1], molecule.atomList[connectedIndex].coordinates[1], null);
@@ -55,11 +52,39 @@ const MoleculeVisualizer = () => {
     });
   });
 
+  const layout = {
+    margin: { l: 0, r: 0, b: 0, t: 0 },
+    paper_bgcolor: '#1e1e1e', // Dark background for the plot
+    plot_bgcolor: '#1e1e1e', // Dark background for the plot
+    font: {
+      color: '#ffffff', // White font color for better contrast
+    },
+    scene: {
+      xaxis: {
+        backgroundcolor: '#1e1e1e',
+        gridcolor: '#444444',
+        showbackground: true,
+        zerolinecolor: '#444444',
+      },
+      yaxis: {
+        backgroundcolor: '#1e1e1e',
+        gridcolor: '#444444',
+        showbackground: true,
+        zerolinecolor: '#444444',
+      },
+      zaxis: {
+        backgroundcolor: '#1e1e1e',
+        gridcolor: '#444444',
+        showbackground: true,
+        zerolinecolor: '#444444',
+      },
+    },
+  };
 
   return (
     <Plot
       data={[traceAtoms, traceConnections]}
-      layout={{ margin: { l: 0, r: 0, b: 0, t: 0 } }}
+      layout={layout}
       style={{ width: '100%', height: '100vh' }}
     />
   );
