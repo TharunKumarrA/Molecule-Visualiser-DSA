@@ -23,16 +23,14 @@ export function buildMolecule() {
   molecule.addAtoms(atom8);
   molecule.addAtoms(atom9);
 
-  molecule.addBond(atom1, atom2);
-  molecule.addBond(atom1, atom3);
-  molecule.addBond(atom1, atom4);
-  molecule.addBond(atom1, atom5);
-
-  molecule.addBond(atom5, atom6);
-  molecule.addBond(atom5, atom7);
-  
-  molecule.addBond(atom7, atom8);
-  molecule.addBond(atom7, atom9);
+  molecule.addBond(atom1, atom2, true, false, false);
+  molecule.addBond(atom1, atom3, true, false, false);
+  molecule.addBond(atom1, atom4, true, false, false);
+  molecule.addBond(atom1, atom5, true, false, false);
+  molecule.addBond(atom5, atom6, true, false, false);
+  molecule.addBond(atom5, atom7, false, true, false);
+  molecule.addBond(atom7, atom8, true, false, false);
+  molecule.addBond(atom7, atom9, true, false, false);
 
   return molecule;
 }
