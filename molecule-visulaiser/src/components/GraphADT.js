@@ -32,13 +32,12 @@ export class Molecule {
     }
   }
 
-  addBond(atom1, atom2, isDoubleBond = false) {
+  addBond(atom1, atom2, isSingleBond = false, isDoubleBond = false, isTripleBond = false) {
     if (
       this.adjacencyList[atom1.atomName] &&
       this.adjacencyList[atom2.atomName]
     ) {
       let flag1 = 0;
-      // Corrected code using a traditional for loop
       for (let i = 0; i < this.adjacencyList[atom1.atomName].length; i++) {
         if (this.adjacencyList[atom1.atomName][i].atomName === atom2.atomName) {
           flag1 = 1;
@@ -46,7 +45,12 @@ export class Molecule {
         }
       }
       if (!flag1) {
-        this.adjacencyList[atom1.atomName].push({ atomName: atom2.atomName, isDoubleBond });
+        this.adjacencyList[atom1.atomName].push({
+          atomName: atom2.atomName,
+          isSingleBond: isSingleBond && !isDoubleBond && !isTripleBond,
+          isDoubleBond: !isSingleBond && isDoubleBond && !isTripleBond,
+          isTripleBond: !isSingleBond && !isDoubleBond && isTripleBond
+        });
       }
   
       let flag2 = 0;
@@ -57,7 +61,12 @@ export class Molecule {
         }
       }
       if (!flag2) {
-        this.adjacencyList[atom2.atomName].push({ atomName: atom1.atomName, isDoubleBond });
+        this.adjacencyList[atom2.atomName].push({
+          atomName: atom1.atomName,
+          isSingleBond: isSingleBond && !isDoubleBond && !isTripleBond,
+          isDoubleBond: !isSingleBond && isDoubleBond && !isTripleBond,
+          isTripleBond: !isSingleBond && !isDoubleBond && isTripleBond
+        });
       }
     }
   }

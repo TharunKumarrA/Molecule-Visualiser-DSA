@@ -368,6 +368,7 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
     v1[2] * v2[0] - v1[0] * v2[2],
     v1[0] * v2[1] - v1[1] * v2[0],
   ];
+
   // Normalize the normal vector
   const normalLength = Math.sqrt(
     normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2
@@ -375,6 +376,7 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
   const normalizedNormal = normal.map((x) => x / normalLength);
   // Calculate the angle between the normal vector and the z-axis
   const angleWithZAxis = Math.acos(normalizedNormal[2]);
+
   // Calculate the rotation axis as the cross product of the normal vector and the z-axis
   const rotationAxis = [-normalizedNormal[1], normalizedNormal[0], 0];
   // Calculate the rotation quaternion
@@ -386,6 +388,7 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
     rotationAxis[1] * Math.sin(rotationAngle / 2),
     rotationAxis[2] * Math.sin(rotationAngle / 2),
   ];
+
   // Rotate the z-axis by the calculated rotation quaternion
   const rotatedZAxis = [
     rotationQuaternion[0] ** 2 +
@@ -399,6 +402,7 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
       (rotationQuaternion[1] * rotationQuaternion[3] +
         rotationQuaternion[0] * rotationQuaternion[2]),
   ];
+
   // Scale the rotated z-axis to a desired length (e.g., 1)
   const desiredLength = 1;
   const fourthCoordinate = rotatedZAxis.map((x) => x * desiredLength);
@@ -408,11 +412,13 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
 function findThirdCoordinate(p1, p2, angle = 109) {
   // Calculate the vector between the two given points
   const v = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+
   // Normalize the vector
   const vLength = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
   const normalizedV = v.map((x) => x / vLength);
   // Calculate the angle between the vector and the z-axis
   const angleWithZAxis = Math.acos(normalizedV[2]);
+
   // Calculate the rotation axis as the cross product of the vector and the z-axis
   const rotationAxis = [-normalizedV[1], normalizedV[0], 0];
   // Calculate the rotation quaternion
@@ -424,6 +430,7 @@ function findThirdCoordinate(p1, p2, angle = 109) {
     rotationAxis[1] * Math.sin(rotationAngle / 2),
     rotationAxis[2] * Math.sin(rotationAngle / 2),
   ];
+
   // Rotate the z-axis by the calculated rotation quaternion
   const rotatedZAxis = [
     rotationQuaternion[0] ** 2 +
@@ -437,6 +444,7 @@ function findThirdCoordinate(p1, p2, angle = 109) {
       (rotationQuaternion[1] * rotationQuaternion[3] +
         rotationQuaternion[0] * rotationQuaternion[2]),
   ];
+
   // Scale the rotated z-axis to a desired length (e.g., 1)
   const desiredLength = 1;
   const thirdCoordinate = rotatedZAxis.map((x) => x * desiredLength);

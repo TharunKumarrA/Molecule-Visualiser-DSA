@@ -10,6 +10,7 @@ import {
 import { Molecule } from "./components/GraphADT";
 import NavBar from "./components/Navbar";
 import EditMolecule from "./components/EditMolecule";
+import { checkCycle } from './components/CheckCycle';
 
 const MoleculeVisualizer = () => {
   const [atomsList, setAtomsList] = useState([]);
