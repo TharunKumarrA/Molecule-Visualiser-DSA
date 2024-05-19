@@ -36,7 +36,7 @@ const MoleculeVisualizer = () => {
     type: 'scatter3d',
     mode: 'lines',
     line: {
-      color: 'gray',
+      color: 'red',
       width: 2,
     },
     x: [],
@@ -48,7 +48,7 @@ const MoleculeVisualizer = () => {
     type: 'scatter3d',
     mode: 'lines',
     line: {
-      color: 'red',
+      color: 'green',
       width: 4,
     },
     x: [],
@@ -56,7 +56,19 @@ const MoleculeVisualizer = () => {
     z: [],
   };
 
-  // Add connections data to traceSingleBonds and traceDoubleBonds
+  const traceTripleBonds = {
+    type: 'scatter3d',
+    mode: 'lines',
+    line: {
+      color: 'black',
+      width: 4,
+    },
+    x: [],
+    y: [],
+    z: [],
+  };
+
+  // Add connections data to traceSingleBonds, traceDoubleBonds, and traceTripleBonds
   molecule.atomList.forEach((atom) => {
     const atomConnections = molecule.adjacencyList[atom.atomName];
     atomConnections.forEach((connection) => {
@@ -65,6 +77,7 @@ const MoleculeVisualizer = () => {
       );
 
       if (connection.isDoubleBond) {
+        // Main line
         traceDoubleBonds.x.push(
           atom.coordinates[0],
           connectedAtom.coordinates[0],
@@ -80,7 +93,24 @@ const MoleculeVisualizer = () => {
           connectedAtom.coordinates[2],
           null
         );
-      } else {
+
+        // Offset line
+        traceDoubleBonds.x.push(
+          atom.coordinates[0] + 0.1,
+          connectedAtom.coordinates[0] + 0.1,
+          null
+        );
+        traceDoubleBonds.y.push(
+          atom.coordinates[1] + 0.1,
+          connectedAtom.coordinates[1] + 0.1,
+          null
+        );
+        traceDoubleBonds.z.push(
+          atom.coordinates[2] + 0.1,
+          connectedAtom.coordinates[2] + 0.1,
+          null
+        );
+      } else if (connection.isSingleBond && !connection.isTripleBond) {
         traceSingleBonds.x.push(
           atom.coordinates[0],
           connectedAtom.coordinates[0],
@@ -94,6 +124,56 @@ const MoleculeVisualizer = () => {
         traceSingleBonds.z.push(
           atom.coordinates[2],
           connectedAtom.coordinates[2],
+          null
+        );
+      } else if (connection.isTripleBond) {
+        // Main line
+        traceTripleBonds.x.push(
+          atom.coordinates[0],
+          connectedAtom.coordinates[0],
+          null
+        );
+        traceTripleBonds.y.push(
+          atom.coordinates[1],
+          connectedAtom.coordinates[1],
+          null
+        );
+        traceTripleBonds.z.push(
+          atom.coordinates[2],
+          connectedAtom.coordinates[2],
+          null
+        );
+
+        // Offset lines
+        traceTripleBonds.x.push(
+          atom.coordinates[0] + 0.1,
+          connectedAtom.coordinates[0] + 0.1,
+          null
+        );
+        traceTripleBonds.y.push(
+          atom.coordinates[1] + 0.1,
+          connectedAtom.coordinates[1] + 0.1,
+          null
+        );
+        traceTripleBonds.z.push(
+          atom.coordinates[2] + 0.1,
+          connectedAtom.coordinates[2] + 0.1,
+          null
+        );
+
+        traceTripleBonds.x.push(
+          atom.coordinates[0] - 0.1,
+          connectedAtom.coordinates[0] - 0.1,
+          null
+        );
+        traceTripleBonds.y.push(
+          atom.coordinates[1] - 0.1,
+          connectedAtom.coordinates[1] - 0.1,
+          null
+        );
+        traceTripleBonds.z.push(
+          atom.coordinates[2] - 0.1,
+          connectedAtom.coordinates[2] - 0.1,
           null
         );
       }
@@ -131,7 +211,7 @@ const MoleculeVisualizer = () => {
 
   return (
     <Plot
-      data={[traceAtoms, traceSingleBonds, traceDoubleBonds]}
+      data={[traceAtoms, traceSingleBonds, traceDoubleBonds, traceTripleBonds]}
       layout={layout}
       style={{ width: '100%', height: '100vh' }}
     />
