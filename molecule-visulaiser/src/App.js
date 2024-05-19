@@ -1,10 +1,13 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { buildMolecule, getCoordinates } from './components/Molecule';
+import { checkCycle } from './components/CheckCycle';
 
 const MoleculeVisualizer = () => {
   const molecule = buildMolecule();
   getCoordinates(molecule);
+
+  console.log("Cycle Check: ", checkCycle(molecule));
 
   const traceAtoms = {
     type: 'scatter3d',

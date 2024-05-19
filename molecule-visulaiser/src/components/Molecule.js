@@ -1,15 +1,18 @@
 import { Molecule, atomNode } from "./GraphADT.js";
 
 export function buildMolecule() {
-  const atom1 = new atomNode("C1", "sp3", "C");
+  const atom1 = new atomNode("C1", "sp2", "C");
   const atom2 = new atomNode("H1", "sp", "H");
-  const atom3 = new atomNode("H2", "sp", "H");
-  const atom4 = new atomNode("H3", "sp", "H");
-  const atom5 = new atomNode("C2", "sp2", "C");
-  const atom6 = new atomNode("H4", "sp", "H");
-  const atom7 = new atomNode("C3", "sp2", "C");
-  const atom8 = new atomNode("H5", "sp", "H");
-  const atom9 = new atomNode("H6", "sp", "H");
+  const atom3 = new atomNode("C2", "sp2", "C");
+  const atom4 = new atomNode("H2", "sp", "H");
+  const atom5 = new atomNode("C3", "sp2", "C");
+  const atom6 = new atomNode("H3", "sp", "H");
+  const atom7 = new atomNode("C4", "sp2", "C");
+  const atom8 = new atomNode("H4", "sp", "H");
+  const atom9 = new atomNode("C5", "sp2", "C");
+  const atom10 = new atomNode("H5", "sp", "H");
+  const atom11 = new atomNode("C6", "sp2", "C");
+  const atom12 = new atomNode("H6", "sp", "H");
 
   const molecule = new Molecule();
 
@@ -22,17 +25,22 @@ export function buildMolecule() {
   molecule.addAtoms(atom7);
   molecule.addAtoms(atom8);
   molecule.addAtoms(atom9);
+  molecule.addAtoms(atom10);
+  molecule.addAtoms(atom11);
+  molecule.addAtoms(atom12);
 
   molecule.addBond(atom1, atom2);
   molecule.addBond(atom1, atom3);
-  molecule.addBond(atom1, atom4);
-  molecule.addBond(atom1, atom5);
-
+  molecule.addBond(atom3, atom4);
+  molecule.addBond(atom3, atom5);
   molecule.addBond(atom5, atom6);
   molecule.addBond(atom5, atom7);
-  
   molecule.addBond(atom7, atom8);
   molecule.addBond(atom7, atom9);
+  molecule.addBond(atom9, atom10);
+  molecule.addBond(atom9, atom11);
+  molecule.addBond(atom11, atom12);
+  molecule.addBond(atom11, atom1);
 
   return molecule;
 }
@@ -82,6 +90,7 @@ export function getCoordinates(molecule) {
   while (queue.length) {
     let [currentAtom, parentAtom] = queue.shift();
     let neighbours = molecule.getNeighbours(currentAtom);
+    console.log("Current Atom: ", currentAtom);
 
     if (parentAtom === null) {
       // Set coordinates for the first atom
@@ -337,68 +346,76 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
     v1[2] * v2[0] - v1[0] * v2[2],
     v1[0] * v2[1] - v1[1] * v2[0]
   ];
+
   // Normalize the normal vector
   const normalLength = Math.sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2);
   const normalizedNormal = normal.map(x => x / normalLength);
+
   // Calculate the angle between the normal vector and the z-axis
   const angleWithZAxis = Math.acos(normalizedNormal[2]);
+
   // Calculate the rotation axis as the cross product of the normal vector and the z-axis
-  const rotationAxis = [
-    -normalizedNormal[1],
-    normalizedNormal[0],
-    0
-  ];
+  const rotationAxis = [-normalizedNormal[1], normalizedNormal[0], 0];
+
   // Calculate the rotation quaternion
-  const rotationAngle = (angleWithZAxis + angle * Math.PI / 180) % (2 * Math.PI);
+  const rotationAngle = (angleWithZAxis + (angle * Math.PI) / 180) % (2 * Math.PI);
+  const sinHalfAngle = Math.sin(rotationAngle / 2);
   const rotationQuaternion = [
     Math.cos(rotationAngle / 2),
-    rotationAxis[0] * Math.sin(rotationAngle / 2),
-    rotationAxis[1] * Math.sin(rotationAngle / 2),
-    rotationAxis[2] * Math.sin(rotationAngle / 2)
+    rotationAxis[0] * sinHalfAngle,
+    rotationAxis[1] * sinHalfAngle,
+    rotationAxis[2] * sinHalfAngle
   ];
+
   // Rotate the z-axis by the calculated rotation quaternion
   const rotatedZAxis = [
     rotationQuaternion[0] ** 2 + rotationQuaternion[1] ** 2 - rotationQuaternion[2] ** 2 - rotationQuaternion[3] ** 2,
     2 * (rotationQuaternion[1] * rotationQuaternion[2] - rotationQuaternion[0] * rotationQuaternion[3]),
     2 * (rotationQuaternion[1] * rotationQuaternion[3] + rotationQuaternion[0] * rotationQuaternion[2])
   ];
+
   // Scale the rotated z-axis to a desired length (e.g., 1)
   const desiredLength = 1;
   const fourthCoordinate = rotatedZAxis.map(x => x * desiredLength);
+
   return fourthCoordinate;
 }
 
 function findThirdCoordinate(p1, p2, angle = 109) {
   // Calculate the vector between the two given points
   const v = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
+
   // Normalize the vector
   const vLength = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
   const normalizedV = v.map(x => x / vLength);
+
   // Calculate the angle between the vector and the z-axis
   const angleWithZAxis = Math.acos(normalizedV[2]);
+
   // Calculate the rotation axis as the cross product of the vector and the z-axis
-  const rotationAxis = [
-    -normalizedV[1],
-    normalizedV[0],
-    0
-  ];
+  const rotationAxis = [-normalizedV[1], normalizedV[0], 0];
+
   // Calculate the rotation quaternion
-  const rotationAngle = (angleWithZAxis + angle * Math.PI / 180) % (2 * Math.PI);
+  const rotationAngle = (angleWithZAxis + (angle * Math.PI) / 180) % (2 * Math.PI);
+  const sinHalfAngle = Math.sin(rotationAngle / 2);
   const rotationQuaternion = [
     Math.cos(rotationAngle / 2),
-    rotationAxis[0] * Math.sin(rotationAngle / 2),
-    rotationAxis[1] * Math.sin(rotationAngle / 2),
-    rotationAxis[2] * Math.sin(rotationAngle / 2)
+    rotationAxis[0] * sinHalfAngle,
+    rotationAxis[1] * sinHalfAngle,
+    rotationAxis[2] * sinHalfAngle
   ];
+
   // Rotate the z-axis by the calculated rotation quaternion
   const rotatedZAxis = [
     rotationQuaternion[0] ** 2 + rotationQuaternion[1] ** 2 - rotationQuaternion[2] ** 2 - rotationQuaternion[3] ** 2,
     2 * (rotationQuaternion[1] * rotationQuaternion[2] - rotationQuaternion[0] * rotationQuaternion[3]),
     2 * (rotationQuaternion[1] * rotationQuaternion[3] + rotationQuaternion[0] * rotationQuaternion[2])
   ];
+
   // Scale the rotated z-axis to a desired length (e.g., 1)
   const desiredLength = 1;
   const thirdCoordinate = rotatedZAxis.map(x => x * desiredLength);
+
   return thirdCoordinate;
 }
 
