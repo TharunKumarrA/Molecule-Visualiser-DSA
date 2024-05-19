@@ -30,7 +30,7 @@ export default function AiSection({ compoundFormula }) {
           {!res && (
             <button
               onClick={handleGetData}
-              className="flex justify-center items-center border-2 border-[#2ABD91] px-4 py-2 rounded-full mx-32"
+              className="flex justify-center items-center border-2 border-[#2ABD91] py-2 rounded-full mx-auto cursor-pointer px-6"
             >
               GET DATA
             </button>
