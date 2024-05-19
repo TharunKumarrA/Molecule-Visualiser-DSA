@@ -10,7 +10,8 @@ import {
 import { Molecule } from "./components/GraphADT";
 import NavBar from "./components/Navbar";
 import EditMolecule from "./components/EditMolecule";
-import { checkCycle } from './components/CheckCycle';
+import AISection from "./components/AISection";
+import { checkCycle } from "./components/CheckCycle";
 
 const MoleculeVisualizer = () => {
   const [atomsList, setAtomsList] = useState([]);
@@ -23,6 +24,27 @@ const MoleculeVisualizer = () => {
     O: 0,
     N: 0,
   });
+
+  const [compoundFormula, setCompoundFormula] = useState('');
+
+  const generateCompoundFormula = () => {
+    let formula = '';
+    for (const [atom, count] of Object.entries(atomCounters)) {
+      if (count > 0) {
+        formula += atom;
+        if (count > 1) {
+          formula += count;
+        }
+      }
+    }
+    return formula;
+  };
+
+  useEffect(() => {
+    const newCompoundFormula = generateCompoundFormula();
+    setCompoundFormula(newCompoundFormula);
+    console.log("Compound Formula: ", newCompoundFormula);
+  }, [atomCounters]);
 
   useEffect(() => {
     getCoordinates(molecule);
@@ -50,7 +72,14 @@ const MoleculeVisualizer = () => {
       console.log(data);
       incrementAtomCounter(data.atomSymbol);
     } else if (data.type === "bond") {
-      addBonds(molecule, data.atom1Name, data.atom2Name, data.isSingleBond, data.isDoubleBond, data.isTripleBond);
+      addBonds(
+        molecule,
+        data.atom1Name,
+        data.atom2Name,
+        data.isSingleBond,
+        data.isDoubleBond,
+        data.isTripleBond
+      );
       console.log("Bond added between: ", data.atom1Name, data.atom2Name);
       console.log(data);
     }
@@ -287,7 +316,9 @@ const MoleculeVisualizer = () => {
     <div className="flex flex-col h-screen bg-[#141414] font-inter">
       <NavBar />
       <div className="flex flex-row w-screen overflow-hidden h-full text-white">
-        <div className="flex w-1/4">Hello</div>
+        <div className="flex w-1/4">
+          <AISection compoundFormula={compoundFormula} />
+        </div>
         <Plot
           data={[traceAtoms, traceSingleBonds, traceDoubleBonds]}
           layout={layout}

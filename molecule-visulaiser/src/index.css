@@ -11,3 +11,15 @@
 @import '@fontsource/inter/700.css'; /* Bold */
 @import '@fontsource/inter/800.css'; /* Extra Bold */
 @import '@fontsource/inter/900.css'; /* Black */
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+ /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+}
+}

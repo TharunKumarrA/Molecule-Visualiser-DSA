@@ -9,6 +9,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
+import { checkCycle } from "./CheckCycle";
 
 export default function EditMolecule({
   atomMenuItems,
@@ -251,6 +252,9 @@ export default function EditMolecule({
             </Button>
           </AccordionDetails>
         </Accordion>
+        <div className="border-2 rounded-xl px-8 py-4 m-2">
+          Check Cycle: {checkCycle(molecule) ? "Cyclic" : "Acyclic"}
+        </div>
       </div>
     </div>
   );
