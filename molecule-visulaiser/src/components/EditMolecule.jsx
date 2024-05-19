@@ -60,10 +60,29 @@ export default function EditMolecule({
 
   const handleSubmitBond = (e) => {
     e.preventDefault();
+    let single, double, triple = false;
+    if (bondData.bondType === "single") {
+      single = true;
+      double = false;
+      triple = false;
+    }
+    if (bondData.bondType === "double") {
+      single = false;
+      double = true;
+      triple = false;
+    }
+    if (bondData.bondType === "triple") {
+      single = false;
+      double = false;
+      triple = true;
+    }
     const data = {
       type: "bond",
       atom1Name: bondData.bondFrom,
       atom2Name: bondData.bondTo,
+      isSingleBond: single,
+      isDoubleBond: double,
+      isTripleBond: triple,
     };
     handleDataFromEditMolecule(data);
   };

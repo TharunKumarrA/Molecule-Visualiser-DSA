@@ -8,12 +8,12 @@ export function addAtoms(molecule, atom) {
   molecule.addAtoms(atom);
 }
 
-export function addBonds(molecule, atom1Name, atom2Name) {
+export function addBonds(molecule, atom1Name, atom2Name, isSingleBond, isDoubleBond, isTripleBond) {
   const atom1 = molecule.atomList.find((atom) => atom.atomName === atom1Name);
   const atom2 = molecule.atomList.find((atom) => atom.atomName === atom2Name);
 
   if (atom1 && atom2) {
-    molecule.addBond(atom1, atom2);
+    molecule.addBond(atom1, atom2, isSingleBond, isDoubleBond, isTripleBond);
   } else {
     console.log("One or both atoms not found in molecule.");
   }

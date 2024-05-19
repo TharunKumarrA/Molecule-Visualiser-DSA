@@ -39,7 +39,7 @@ const MoleculeVisualizer = () => {
   const handleDataFromEditMolecule = (data) => {
     if (data.type === "atom") {
       const atomCounter = atomCounters[data.atomSymbol];
-      const atomName = `${data.atomSymbol}${atomCounter}`;
+      const atomName = data.atomSymbol + atomCounter;
       const atom = createAtomNode(
         atomName,
         data.hybridisation,
@@ -47,10 +47,12 @@ const MoleculeVisualizer = () => {
       );
       addAtoms(molecule, atom);
       console.log("Atom added: ", atom.atomName);
+      console.log(data);
       incrementAtomCounter(data.atomSymbol);
     } else if (data.type === "bond") {
-      addBonds(molecule, data.atom1Name, data.atom2Name);
+      addBonds(molecule, data.atom1Name, data.atom2Name, data.isSingleBond, data.isDoubleBond, data.isTripleBond);
       console.log("Bond added between: ", data.atom1Name, data.atom2Name);
+      console.log(data);
     }
     setMolecule(molecule);
     setTrigger(!trigger);
@@ -148,13 +150,13 @@ const MoleculeVisualizer = () => {
           null
         );
         traceDoubleBonds.y.push(
-          atom.coordinates[1] + 0.01,
-          connectedAtom.coordinates[1] + 0.01,
+          atom.coordinates[1],
+          connectedAtom.coordinates[1],
           null
         );
         traceDoubleBonds.z.push(
           atom.coordinates[2] + 0.01,
-          connectedAtom.coordinates[2] + 0.01,
+          connectedAtom.coordinates[2],
           null
         );
       } else if (connection.isSingleBond && !connection.isTripleBond) {
