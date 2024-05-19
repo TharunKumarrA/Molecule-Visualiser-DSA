@@ -15,13 +15,14 @@ export class Molecule {
   }
 
   getNeighbours(atom) {
-    if (this.adjacencyList[atom.atomName]) {
-      return this.adjacencyList[atom.atomName].map(({ atomName }) =>
-        this.atomList.find((a) => a.atomName === atomName)
-      );
-    }
-    return [];
+  if (atom && this.adjacencyList[atom.atomName]) {
+    return this.adjacencyList[atom.atomName].map(({ atomName }) =>
+      this.atomList.find((a) => a.atomName === atomName)
+    );
   }
+  return [];
+}
+
 
   addAtoms(atom) {
     if (!this.adjacencyList[atom.atomName]) {

@@ -1,40 +1,22 @@
 import { Molecule, atomNode } from "./GraphADT.js";
 
-export function buildMolecule() {
-  const atom1 = new atomNode("C1", "sp3", "C");
-  const atom2 = new atomNode("H1", "sp", "H");
-  const atom3 = new atomNode("H2", "sp", "H");
-  const atom4 = new atomNode("H3", "sp", "H");
-  const atom5 = new atomNode("C2", "sp2", "C");
-  const atom6 = new atomNode("H4", "sp", "H");
-  const atom7 = new atomNode("C3", "sp2", "C");
-  const atom8 = new atomNode("H5", "sp", "H");
-  const atom9 = new atomNode("H6", "sp", "H");
+export function createAtomNode(atomName, hybridisation, atomSymbol) {
+  return new atomNode(atomName, hybridisation, atomSymbol);
+}
 
-  const molecule = new Molecule();
+export function addAtoms(molecule, atom) {
+  molecule.addAtoms(atom);
+}
 
-  molecule.addAtoms(atom1);
-  molecule.addAtoms(atom2);
-  molecule.addAtoms(atom3);
-  molecule.addAtoms(atom4);
-  molecule.addAtoms(atom5);
-  molecule.addAtoms(atom6);
-  molecule.addAtoms(atom7);
-  molecule.addAtoms(atom8);
-  molecule.addAtoms(atom9);
+export function addBonds(molecule, atom1Name, atom2Name) {
+  const atom1 = molecule.atomList.find((atom) => atom.atomName === atom1Name);
+  const atom2 = molecule.atomList.find((atom) => atom.atomName === atom2Name);
 
-  molecule.addBond(atom1, atom2);
-  molecule.addBond(atom1, atom3);
-  molecule.addBond(atom1, atom4);
-  molecule.addBond(atom1, atom5);
-
-  molecule.addBond(atom5, atom6);
-  molecule.addBond(atom5, atom7);
-  
-  molecule.addBond(atom7, atom8);
-  molecule.addBond(atom7, atom9);
-
-  return molecule;
+  if (atom1 && atom2) {
+    molecule.addBond(atom1, atom2);
+  } else {
+    console.log("One or both atoms not found in molecule.");
+  }
 }
 
 export function findCentralAtoms(molecule) {
@@ -59,11 +41,16 @@ export function findCentralAtoms(molecule) {
 
 // Calculate Coordiantes of the atoms in 3D Plane.
 export function getCoordinates(molecule) {
+  
   // Constant Angles defined for respective hybridisations.
   const angles = {
     sp: { angleX: Math.PI, angleY: 0, angleZ: 0 },
-    sp2: { angleX: -Math.PI / 6, angleY: (Math.PI) / 3, angleZ: 0 },
-    sp3: { angleX: 0.615*Math.PI, angleY: 0.955*Math.PI, angleZ: 0.615*Math.PI },
+    sp2: { angleX: -Math.PI / 6, angleY: Math.PI / 3, angleZ: 0 },
+    sp3: {
+      angleX: 0.615 * Math.PI,
+      angleY: 0.955 * Math.PI,
+      angleZ: 0.615 * Math.PI,
+    },
   };
 
   // Get Central Atoms of the Molecule.
@@ -82,67 +69,30 @@ export function getCoordinates(molecule) {
   while (queue.length) {
     let [currentAtom, parentAtom] = queue.shift();
     let neighbours = molecule.getNeighbours(currentAtom);
+    if (currentAtom) {
+      if (parentAtom === null) {
+        // Set coordinates for the first atom
+        currentAtom.coordinates = [0, 0, 0];
+        directionVectorStack.push([1, 0, 0]);
+      } else {
+        let initalDirection =
+          directionVectorStack[directionVectorStack.length - 1];
+        console.log("Initial Direction: ", initalDirection);
+        let parentCoordinates = parentAtom.coordinates;
+        let angleX, angleY, angleZ;
+        let bondlength = 1;
+        let newDirection = [];
 
-    if (parentAtom === null) {
-      // Set coordinates for the first atom
-      currentAtom.coordinates = [0, 0, 0];
-      directionVectorStack.push([1, 0, 0]);
-    } else {
-      let initalDirection = directionVectorStack[directionVectorStack.length - 1];
-      console.log("Initial Direction: ", initalDirection);
-      let parentCoordinates = parentAtom.coordinates;
-      let angleX, angleY, angleZ;
-      let bondlength = 1;
-      let newDirection = [];
+        angleX = angles[parentAtom.hybridisation].angleX;
+        angleY = angles[parentAtom.hybridisation].angleY;
+        angleZ = angles[parentAtom.hybridisation].angleZ;
 
-      angleX = angles[parentAtom.hybridisation].angleX;
-      angleY = angles[parentAtom.hybridisation].angleY;
-      angleZ = angles[parentAtom.hybridisation].angleZ;
-
-      if (parentAtom.hybridisation === "sp") {
-        newDirection = [
-          -initalDirection[0],
-          initalDirection[1],
-          initalDirection[2],
-        ];
-        directionVectorStack.push(newDirection);
-
-        let newCoordinates = [
-          parentCoordinates[0] + bondlength * newDirection[0],
-          parentCoordinates[1] + bondlength * newDirection[1],
-          parentCoordinates[2] + bondlength * newDirection[2],
-        ];
-        currentAtom.coordinates = newCoordinates;
-        console.log("New Direction for atom: ", currentAtom, newDirection);
-      } else  {
-        if((initalDirection[0] === 1 && initalDirection[1] === 0 && initalDirection[2] === 0) || (directionVectorStack.length === 1)){
+        if (parentAtom.hybridisation === "sp") {
           newDirection = [
-            initalDirection[0] * (Math.cos(angleY) * Math.cos(angleZ)) +
-              initalDirection[1] * (Math.cos(angleY) * Math.sin(angleZ)) -
-              initalDirection[2] * Math.sin(angleY),
-            initalDirection[0] *
-              (-Math.cos(angleX) * Math.sin(angleZ) +
-                Math.sin(angleX) * Math.sin(angleY) * Math.cos(angleZ)) +
-              initalDirection[1] *
-                (Math.cos(angleX) * Math.cos(angleZ) +
-                  Math.sin(angleX) * Math.sin(angleY) * Math.sin(angleZ)) +
-              initalDirection[2] * (Math.sin(angleX) * Math.cos(angleY)),
-            initalDirection[0] *
-              (Math.sin(angleX) * Math.sin(angleZ) +
-                Math.cos(angleX) * Math.sin(angleY) * Math.cos(angleZ)) +
-              initalDirection[1] *
-                (-Math.sin(angleX) * Math.cos(angleZ) +
-                  Math.cos(angleX) * Math.sin(angleY) * Math.sin(angleZ)) +
-              initalDirection[2] * (Math.cos(angleX) * Math.cos(angleY)),
+            -initalDirection[0],
+            initalDirection[1],
+            initalDirection[2],
           ];
-
-          if(parentAtom.hybridisation === 'sp2' && currentAtom.atomSymbol === 'C'){
-            newDirection = rotateVectorAroundXYPlane(initalDirection, -120);
-          }
-          else if(parentAtom.hybridisation === 'sp2' && currentAtom.atomSymbol === 'H'){
-            newDirection = rotateVectorAroundXYPlane(initalDirection, 120);
-          }
-          if(initalDirection[0] === 1 && initalDirection[1] === 0 && initalDirection[2] === 0) directionVectorStack.pop();
           directionVectorStack.push(newDirection);
 
           let newCoordinates = [
@@ -152,106 +102,178 @@ export function getCoordinates(molecule) {
           ];
           currentAtom.coordinates = newCoordinates;
           console.log("New Direction for atom: ", currentAtom, newDirection);
-        }
-        else if(directionVectorStack.length === 2){
-          console.log("Came Here for Atom: ", currentAtom);
-          let firstCoordinate = directionVectorStack[directionVectorStack.length - 1];
-          let secondCoordinate = directionVectorStack[directionVectorStack.length - 2];
-          
-          console.log("First Coordinate:", firstCoordinate);
-          console.log("Second Coordinate:", secondCoordinate);
-          
-          if(parentAtom.hybridisation === 'sp2') newDirection = calculateVector120DegreesOnPlane(firstCoordinate, secondCoordinate, 120);
-          if(parentAtom.hybridisation === 'sp3') newDirection = findThirdCoordinate(firstCoordinate, secondCoordinate);
-          directionVectorStack.push(newDirection);
+        } else {
+          if (
+            (initalDirection[0] === 1 &&
+              initalDirection[1] === 0 &&
+              initalDirection[2] === 0) ||
+            directionVectorStack.length === 1
+          ) {
+            newDirection = [
+              initalDirection[0] * (Math.cos(angleY) * Math.cos(angleZ)) +
+                initalDirection[1] * (Math.cos(angleY) * Math.sin(angleZ)) -
+                initalDirection[2] * Math.sin(angleY),
+              initalDirection[0] *
+                (-Math.cos(angleX) * Math.sin(angleZ) +
+                  Math.sin(angleX) * Math.sin(angleY) * Math.cos(angleZ)) +
+                initalDirection[1] *
+                  (Math.cos(angleX) * Math.cos(angleZ) +
+                    Math.sin(angleX) * Math.sin(angleY) * Math.sin(angleZ)) +
+                initalDirection[2] * (Math.sin(angleX) * Math.cos(angleY)),
+              initalDirection[0] *
+                (Math.sin(angleX) * Math.sin(angleZ) +
+                  Math.cos(angleX) * Math.sin(angleY) * Math.cos(angleZ)) +
+                initalDirection[1] *
+                  (-Math.sin(angleX) * Math.cos(angleZ) +
+                    Math.cos(angleX) * Math.sin(angleY) * Math.sin(angleZ)) +
+                initalDirection[2] * (Math.cos(angleX) * Math.cos(angleY)),
+            ];
 
-          console.log("New Direction:", newDirection);
-          
-          // Calculate new coordinates
-          let newCoordinates = [
+            if (
+              parentAtom.hybridisation === "sp2" &&
+              currentAtom.atomSymbol === "C"
+            ) {
+              newDirection = rotateVectorAroundXYPlane(initalDirection, -120);
+            } else if (
+              parentAtom.hybridisation === "sp2" &&
+              currentAtom.atomSymbol === "H"
+            ) {
+              newDirection = rotateVectorAroundXYPlane(initalDirection, 120);
+            }
+            if (
+              initalDirection[0] === 1 &&
+              initalDirection[1] === 0 &&
+              initalDirection[2] === 0
+            )
+              directionVectorStack.pop();
+            directionVectorStack.push(newDirection);
+
+            let newCoordinates = [
               parentCoordinates[0] + bondlength * newDirection[0],
               parentCoordinates[1] + bondlength * newDirection[1],
-              parentCoordinates[2] + bondlength * newDirection[2]
-          ];
-          console.log("New Coordinates:", newCoordinates);
-          currentAtom.coordinates = newCoordinates;        
-        }
-        else if(directionVectorStack.length === 3){
-          console.log("Came to 3 for atom: ", currentAtom);
-          let firstCoordinate = directionVectorStack[directionVectorStack.length - 1];
-          let secondCoordinate = directionVectorStack[directionVectorStack.length - 2];
-          let thirdCoordinate = directionVectorStack[directionVectorStack.length - 3];
+              parentCoordinates[2] + bondlength * newDirection[2],
+            ];
+            currentAtom.coordinates = newCoordinates;
+            console.log("New Direction for atom: ", currentAtom, newDirection);
+          } else if (directionVectorStack.length === 2) {
+            console.log("Came Here for Atom: ", currentAtom);
+            let firstCoordinate =
+              directionVectorStack[directionVectorStack.length - 1];
+            let secondCoordinate =
+              directionVectorStack[directionVectorStack.length - 2];
 
-          newDirection = findFourthCoordinate(firstCoordinate, secondCoordinate, thirdCoordinate);
-          directionVectorStack.push(newDirection);
+            console.log("First Coordinate:", firstCoordinate);
+            console.log("Second Coordinate:", secondCoordinate);
 
-          console.log("New Direction: ", newDirection);
+            if (parentAtom.hybridisation === "sp2")
+              newDirection = calculateVector120DegreesOnPlane(
+                firstCoordinate,
+                secondCoordinate,
+                120
+              );
+            if (parentAtom.hybridisation === "sp3")
+              newDirection = findThirdCoordinate(
+                firstCoordinate,
+                secondCoordinate
+              );
+            directionVectorStack.push(newDirection);
 
-          let newCoordinates = [
-            parentCoordinates[0] + bondlength * newDirection[0],
-            parentCoordinates[1] + bondlength * newDirection[1],
-            parentCoordinates[2] + bondlength * newDirection[2]
-          ];
-          console.log("New Coordinates:", newCoordinates);
-          currentAtom.coordinates = newCoordinates;
+            console.log("New Direction:", newDirection);
+
+            // Calculate new coordinates
+            let newCoordinates = [
+              parentCoordinates[0] + bondlength * newDirection[0],
+              parentCoordinates[1] + bondlength * newDirection[1],
+              parentCoordinates[2] + bondlength * newDirection[2],
+            ];
+            console.log("New Coordinates:", newCoordinates);
+            currentAtom.coordinates = newCoordinates;
+          } else if (directionVectorStack.length === 3) {
+            console.log("Came to 3 for atom: ", currentAtom);
+            let firstCoordinate =
+              directionVectorStack[directionVectorStack.length - 1];
+            let secondCoordinate =
+              directionVectorStack[directionVectorStack.length - 2];
+            let thirdCoordinate =
+              directionVectorStack[directionVectorStack.length - 3];
+
+            newDirection = findFourthCoordinate(
+              firstCoordinate,
+              secondCoordinate,
+              thirdCoordinate
+            );
+            directionVectorStack.push(newDirection);
+
+            console.log("New Direction: ", newDirection);
+
+            let newCoordinates = [
+              parentCoordinates[0] + bondlength * newDirection[0],
+              parentCoordinates[1] + bondlength * newDirection[1],
+              parentCoordinates[2] + bondlength * newDirection[2],
+            ];
+            console.log("New Coordinates:", newCoordinates);
+            currentAtom.coordinates = newCoordinates;
+          }
         }
       }
-    }
 
-    // Pushes all neighbours of the currentatom to the queue.
-    let pushedCentral = false;
-    for (let neighbour of neighbours) {
-      if (!visited.includes(neighbour)) {
-        if(centralAtoms.includes(neighbour)){
-          if(!pushedCentral){
+      // Pushes all neighbours of the currentatom to the queue.
+      let pushedCentral = false;
+      for (let neighbour of neighbours) {
+        if (!visited.includes(neighbour)) {
+          if (centralAtoms.includes(neighbour)) {
+            if (!pushedCentral) {
+              queue.push([neighbour, currentAtom]);
+              visited.push(neighbour);
+            }
+          } else {
             queue.push([neighbour, currentAtom]);
             visited.push(neighbour);
           }
+          if (centralAtoms.includes(neighbour)) pushedCentral = true;
         }
-        else{
-          queue.push([neighbour, currentAtom]);
-          visited.push(neighbour);
-        }
-        if(centralAtoms.includes(neighbour)) pushedCentral = true;
       }
-    }
 
-    // Alkene Part - Yet has some logic to be implemented
-    if (!centralAtoms.includes(currentAtom) && currentAtom.atomSymbol !== "H") {
+      // Alkene Part - Yet has some logic to be implemented
       if (
-        checkCentralVisited(centralVisited, centralAtoms) &&
-        checkVisited(visited, molecule)
+        !centralAtoms.includes(currentAtom) &&
+        currentAtom.atomSymbol !== "H"
       ) {
-        let secondMaxHybrid = "";
-        for (let atom of molecule.atomList) {
-          if (
-            atom.hybridisation > secondMaxHybrid &&
-            atom.hybridisation < centralAtoms[0].hybridisation
-          ) {
-            secondMaxHybrid = atom.hybridisation;
+        if (
+          checkCentralVisited(centralVisited, centralAtoms) &&
+          checkVisited(visited, molecule)
+        ) {
+          let secondMaxHybrid = "";
+          for (let atom of molecule.atomList) {
+            if (
+              atom.hybridisation > secondMaxHybrid &&
+              atom.hybridisation < centralAtoms[0].hybridisation
+            ) {
+              secondMaxHybrid = atom.hybridisation;
+            }
           }
-        }
-        console.log("New MAX Hybridisation: ", secondMaxHybrid);
-        for (let atom of molecule.atomList) {
-          if (atom.hybridisation === secondMaxHybrid) {
-            centralAtoms.push(atom);
+          console.log("New MAX Hybridisation: ", secondMaxHybrid);
+          for (let atom of molecule.atomList) {
+            if (atom.hybridisation === secondMaxHybrid) {
+              centralAtoms.push(atom);
+            }
           }
         }
       }
-    }
 
-    // Updating the stack to be empty if current atom is a central atom
-    if (centralAtoms.includes(currentAtom) && parentAtom !== null) {
-      centralVisited[currentAtom] = true;
-      let temp = directionVectorStack[directionVectorStack.length - 1];
-      directionVectorStack = [];
-      directionVectorStack.push(temp);
-    }
+      // Updating the stack to be empty if current atom is a central atom
+      if (centralAtoms.includes(currentAtom) && parentAtom !== null) {
+        centralVisited[currentAtom] = true;
+        let temp = directionVectorStack[directionVectorStack.length - 1];
+        directionVectorStack = [];
+        directionVectorStack.push(temp);
+      }
 
-    // Setting the connections property for the current atom
-    currentAtom.connections = neighbours;
+      // Setting the connections property for the current atom
+      currentAtom.connections = neighbours;
+    }
+    console.log("New Central Atoms: ", centralAtoms);
   }
-  console.log("New Central Atoms: ", centralAtoms);
 }
 
 // Returns true if central atoms list doesnt have any atom yet to be visited.
@@ -271,7 +293,6 @@ function checkVisited(visited, molecule) {
 }
 
 export function drawMolecule(molecule) {}
-
 
 // Helper function to calculate the vector sum
 function vectorSum(v1, v2) {
@@ -299,7 +320,11 @@ function crossProduct(v1, v2) {
 }
 
 // Helper function to calculate the vector that is 120 degrees from the two given vectors and lies on the same plane
-function calculateVector120DegreesOnPlane(firstCoordinate, secondCoordinate, a) {
+function calculateVector120DegreesOnPlane(
+  firstCoordinate,
+  secondCoordinate,
+  a
+) {
   const normal = crossProduct(firstCoordinate, secondCoordinate); // Calculate the normal vector to the plane formed by the two input vectors
   const normalizedNormal = normalize(normal); // Normalize the normal vector
   const projectedFirst = [
@@ -321,9 +346,15 @@ function calculateVector120DegreesOnPlane(firstCoordinate, secondCoordinate, a) 
     [-Math.sin(angle), 0, Math.cos(angle)],
   ]; // Create a rotation matrix for rotating around the Z-axis by 120 degrees
   const vector120Degrees = [
-    rotationMatrix[0][0] * normalizedSumVector[0] + rotationMatrix[0][1] * normalizedSumVector[1] + rotationMatrix[0][2] * normalizedSumVector[2],
-    rotationMatrix[1][0] * normalizedSumVector[0] + rotationMatrix[1][1] * normalizedSumVector[1] + rotationMatrix[1][2] * normalizedSumVector[2],
-    rotationMatrix[2][0] * normalizedSumVector[0] + rotationMatrix[2][1] * normalizedSumVector[1] + rotationMatrix[2][2] * normalizedSumVector[2],
+    rotationMatrix[0][0] * normalizedSumVector[0] +
+      rotationMatrix[0][1] * normalizedSumVector[1] +
+      rotationMatrix[0][2] * normalizedSumVector[2],
+    rotationMatrix[1][0] * normalizedSumVector[0] +
+      rotationMatrix[1][1] * normalizedSumVector[1] +
+      rotationMatrix[1][2] * normalizedSumVector[2],
+    rotationMatrix[2][0] * normalizedSumVector[0] +
+      rotationMatrix[2][1] * normalizedSumVector[1] +
+      rotationMatrix[2][2] * normalizedSumVector[2],
   ]; // Rotate the normalized vector sum by 120 degrees using the rotation matrix
   return vector120Degrees;
 }
@@ -335,36 +366,42 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
   const normal = [
     v1[1] * v2[2] - v1[2] * v2[1],
     v1[2] * v2[0] - v1[0] * v2[2],
-    v1[0] * v2[1] - v1[1] * v2[0]
+    v1[0] * v2[1] - v1[1] * v2[0],
   ];
   // Normalize the normal vector
-  const normalLength = Math.sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2);
-  const normalizedNormal = normal.map(x => x / normalLength);
+  const normalLength = Math.sqrt(
+    normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2
+  );
+  const normalizedNormal = normal.map((x) => x / normalLength);
   // Calculate the angle between the normal vector and the z-axis
   const angleWithZAxis = Math.acos(normalizedNormal[2]);
   // Calculate the rotation axis as the cross product of the normal vector and the z-axis
-  const rotationAxis = [
-    -normalizedNormal[1],
-    normalizedNormal[0],
-    0
-  ];
+  const rotationAxis = [-normalizedNormal[1], normalizedNormal[0], 0];
   // Calculate the rotation quaternion
-  const rotationAngle = (angleWithZAxis + angle * Math.PI / 180) % (2 * Math.PI);
+  const rotationAngle =
+    (angleWithZAxis + (angle * Math.PI) / 180) % (2 * Math.PI);
   const rotationQuaternion = [
     Math.cos(rotationAngle / 2),
     rotationAxis[0] * Math.sin(rotationAngle / 2),
     rotationAxis[1] * Math.sin(rotationAngle / 2),
-    rotationAxis[2] * Math.sin(rotationAngle / 2)
+    rotationAxis[2] * Math.sin(rotationAngle / 2),
   ];
   // Rotate the z-axis by the calculated rotation quaternion
   const rotatedZAxis = [
-    rotationQuaternion[0] ** 2 + rotationQuaternion[1] ** 2 - rotationQuaternion[2] ** 2 - rotationQuaternion[3] ** 2,
-    2 * (rotationQuaternion[1] * rotationQuaternion[2] - rotationQuaternion[0] * rotationQuaternion[3]),
-    2 * (rotationQuaternion[1] * rotationQuaternion[3] + rotationQuaternion[0] * rotationQuaternion[2])
+    rotationQuaternion[0] ** 2 +
+      rotationQuaternion[1] ** 2 -
+      rotationQuaternion[2] ** 2 -
+      rotationQuaternion[3] ** 2,
+    2 *
+      (rotationQuaternion[1] * rotationQuaternion[2] -
+        rotationQuaternion[0] * rotationQuaternion[3]),
+    2 *
+      (rotationQuaternion[1] * rotationQuaternion[3] +
+        rotationQuaternion[0] * rotationQuaternion[2]),
   ];
   // Scale the rotated z-axis to a desired length (e.g., 1)
   const desiredLength = 1;
-  const fourthCoordinate = rotatedZAxis.map(x => x * desiredLength);
+  const fourthCoordinate = rotatedZAxis.map((x) => x * desiredLength);
   return fourthCoordinate;
 }
 
@@ -373,35 +410,38 @@ function findThirdCoordinate(p1, p2, angle = 109) {
   const v = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
   // Normalize the vector
   const vLength = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
-  const normalizedV = v.map(x => x / vLength);
+  const normalizedV = v.map((x) => x / vLength);
   // Calculate the angle between the vector and the z-axis
   const angleWithZAxis = Math.acos(normalizedV[2]);
   // Calculate the rotation axis as the cross product of the vector and the z-axis
-  const rotationAxis = [
-    -normalizedV[1],
-    normalizedV[0],
-    0
-  ];
+  const rotationAxis = [-normalizedV[1], normalizedV[0], 0];
   // Calculate the rotation quaternion
-  const rotationAngle = (angleWithZAxis + angle * Math.PI / 180) % (2 * Math.PI);
+  const rotationAngle =
+    (angleWithZAxis + (angle * Math.PI) / 180) % (2 * Math.PI);
   const rotationQuaternion = [
     Math.cos(rotationAngle / 2),
     rotationAxis[0] * Math.sin(rotationAngle / 2),
     rotationAxis[1] * Math.sin(rotationAngle / 2),
-    rotationAxis[2] * Math.sin(rotationAngle / 2)
+    rotationAxis[2] * Math.sin(rotationAngle / 2),
   ];
   // Rotate the z-axis by the calculated rotation quaternion
   const rotatedZAxis = [
-    rotationQuaternion[0] ** 2 + rotationQuaternion[1] ** 2 - rotationQuaternion[2] ** 2 - rotationQuaternion[3] ** 2,
-    2 * (rotationQuaternion[1] * rotationQuaternion[2] - rotationQuaternion[0] * rotationQuaternion[3]),
-    2 * (rotationQuaternion[1] * rotationQuaternion[3] + rotationQuaternion[0] * rotationQuaternion[2])
+    rotationQuaternion[0] ** 2 +
+      rotationQuaternion[1] ** 2 -
+      rotationQuaternion[2] ** 2 -
+      rotationQuaternion[3] ** 2,
+    2 *
+      (rotationQuaternion[1] * rotationQuaternion[2] -
+        rotationQuaternion[0] * rotationQuaternion[3]),
+    2 *
+      (rotationQuaternion[1] * rotationQuaternion[3] +
+        rotationQuaternion[0] * rotationQuaternion[2]),
   ];
   // Scale the rotated z-axis to a desired length (e.g., 1)
   const desiredLength = 1;
-  const thirdCoordinate = rotatedZAxis.map(x => x * desiredLength);
+  const thirdCoordinate = rotatedZAxis.map((x) => x * desiredLength);
   return thirdCoordinate;
 }
-
 
 function rotateVectorAroundXYPlane(vector, angleInDegrees) {
   const [x, y, z] = vector;
