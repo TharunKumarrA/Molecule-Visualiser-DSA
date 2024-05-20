@@ -25,10 +25,10 @@ const MoleculeVisualizer = () => {
     N: 0,
   });
 
-  const [compoundFormula, setCompoundFormula] = useState('');
+  const [compoundFormula, setCompoundFormula] = useState("");
 
   const generateCompoundFormula = () => {
-    let formula = '';
+    let formula = "";
     for (const [atom, count] of Object.entries(atomCounters)) {
       if (count > 0) {
         formula += atom;
@@ -84,6 +84,11 @@ const MoleculeVisualizer = () => {
       console.log(data);
     }
     setMolecule(molecule);
+    setTrigger(!trigger);
+  };
+
+  const handleMoleculeUpdate = (updatedMolecule) => {
+    setMolecule(updatedMolecule);
     setTrigger(!trigger);
   };
 
@@ -335,6 +340,8 @@ const MoleculeVisualizer = () => {
             setAtomsList={setAtomsList}
             handleDataFromEditMolecule={handleDataFromEditMolecule}
             atomCounters={atomCounters}
+            handleMoleculeUpdate={handleMoleculeUpdate}
+            setAtomCounters={setAtomCounters}
           />
         </div>
       </div>

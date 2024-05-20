@@ -10,6 +10,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import { checkCycle } from "./CheckCycle";
+import { Molecule } from "./GraphADT";
+import { addAtoms, addBonds, createAtomNode, getCoordinates } from "./Molecule";
 
 export default function EditMolecule({
   atomMenuItems,
@@ -20,6 +22,9 @@ export default function EditMolecule({
   atomsList,
   setAtomsList,
   handleDataFromEditMolecule,
+  atomCounters,
+  handleMoleculeUpdate,
+  setAtomCounters,
 }) {
   const [expandedAccordion, setExpandedAccordion] = useState("panel1");
   const [atomData, setAtomData] = useState({
@@ -31,6 +36,7 @@ export default function EditMolecule({
     bondTo: bondMenuItems[1].value,
     bondType: "single",
   });
+  const [selectedMolecule, setSelectedMolecule] = useState(sampleMolecules[0]);
 
   const handleChangeAccordion = (panel) => (event, newExpanded) => {
     setExpandedAccordion(newExpanded ? panel : null);
@@ -48,6 +54,101 @@ export default function EditMolecule({
     console.log("currently selected bond type: ", value);
   };
 
+  const handleShowMolecule = () => {
+    switch (selectedMolecule) {
+      case "CH4":
+        const methane = new Molecule();
+
+        addAtoms(methane, createAtomNode("C0", "sp3", "C"));
+        addAtoms(methane, createAtomNode("H0", "sp", "H"));
+        addAtoms(methane, createAtomNode("H1", "sp", "H"));
+        addAtoms(methane, createAtomNode("H2", "sp", "H"));
+        addAtoms(methane, createAtomNode("H3", "sp", "H"));
+
+        addBonds(methane, "C0", "H0", true, false, false);
+        addBonds(methane, "C0", "H1", true, false, false);
+        addBonds(methane, "C0", "H2", true, false, false);
+        addBonds(methane, "C0", "H3", true, false, false);
+
+        setAtomCounters({ C: 1, H: 4, O: 0, N: 0 });
+        getCoordinates(methane);
+        setMolecule(methane);
+        break;
+      case "C2H6":
+        const ethane = new Molecule();
+
+        addAtoms(ethane, createAtomNode("C0", "sp3", "C"));
+        addAtoms(ethane, createAtomNode("C1", "sp3", "C"));
+        addAtoms(ethane, createAtomNode("H0", "sp", "H"));
+        addAtoms(ethane, createAtomNode("H1", "sp", "H"));
+        addAtoms(ethane, createAtomNode("H2", "sp", "H"));
+        addAtoms(ethane, createAtomNode("H3", "sp", "H"));
+        addAtoms(ethane, createAtomNode("H4", "sp", "H"));
+        addAtoms(ethane, createAtomNode("H5", "sp", "H"));
+
+        addBonds(ethane, "C0", "H0", true, false, false);
+        addBonds(ethane, "C0", "H1", true, false, false);
+        addBonds(ethane, "C0", "H2", true, false, false);
+        addBonds(ethane, "C0", "C1", true, false, false);
+        addBonds(ethane, "C1", "H3", true, false, false);
+        addBonds(ethane, "C1", "H4", true, false, false);
+        addBonds(ethane, "C1", "H5", true, false, false);
+
+        setAtomCounters({ C: 2, H: 6, O: 0, N: 0 });
+        getCoordinates(ethane);
+        setMolecule(ethane);
+        break;
+      case "C6H6":
+        const benzene = new Molecule();
+        addAtoms(benzene, createAtomNode("C0", "sp2", "C"));
+        addAtoms(benzene, createAtomNode("C1", "sp2", "C"));
+        addAtoms(benzene, createAtomNode("C2", "sp2", "C"));
+        addAtoms(benzene, createAtomNode("C3", "sp2", "C"));
+        addAtoms(benzene, createAtomNode("C4", "sp2", "C"));
+        addAtoms(benzene, createAtomNode("C5", "sp2", "C"));
+        addAtoms(benzene, createAtomNode("H0", "sp", "H"));
+        addAtoms(benzene, createAtomNode("H1", "sp", "H"));
+        addAtoms(benzene, createAtomNode("H2", "sp", "H"));
+        addAtoms(benzene, createAtomNode("H3", "sp", "H"));
+        addAtoms(benzene, createAtomNode("H4", "sp", "H"));
+        addAtoms(benzene, createAtomNode("H5", "sp", "H"));
+
+        addBonds(benzene, "C0", "H0", true, false, false);
+        addBonds(benzene, "C0", "C1", true, false, false);
+        addBonds(benzene, "C1", "H1", true, false, false);
+        addBonds(benzene, "C1", "C2", false, true, false);
+        addBonds(benzene, "C2", "H2", true, false, false);
+        addBonds(benzene, "C2", "C3", true, false, false);
+        addBonds(benzene, "C3", "H3", true, false, false);
+        addBonds(benzene, "C3", "C4", false, true, false);
+        addBonds(benzene, "C4", "H4", true, false, false);
+        addBonds(benzene, "C4", "C5", true, false, false);
+        addBonds(benzene, "C5", "H5", true, false, false);
+        addBonds(benzene, "C5", "C0", false, true, false);
+
+        setAtomCounters({ C: 6, H: 6, O: 0, N: 0 });
+        getCoordinates(benzene);
+        setMolecule(benzene);
+        break;
+      case "H2O":
+        const water = new Molecule();
+
+        addAtoms(water, createAtomNode("O0", "sp3", "O"));
+        addAtoms(water, createAtomNode("H0", "sp", "H"));
+        addAtoms(water, createAtomNode("H1", "sp", "H"));
+
+        addBonds(water, "O0", "H0", true, false, false);
+        addBonds(water, "O0", "H1", true, false, false);
+
+        setAtomCounters({ C: 0, H: 2, O: 1, N: 0 });
+        getCoordinates(water);
+        setMolecule(water);
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleSubmitAtom = (e) => {
     e.preventDefault();
     const data = {
@@ -61,7 +162,9 @@ export default function EditMolecule({
 
   const handleSubmitBond = (e) => {
     e.preventDefault();
-    let single, double, triple = false;
+    let single,
+      double,
+      triple = false;
     if (bondData.bondType === "single") {
       single = true;
       double = false;
@@ -237,7 +340,11 @@ export default function EditMolecule({
             EXAMPLES
           </AccordionSummary>
           <AccordionDetails className="bg-[#1e1e1e] text-white flex flex-col items-center">
-            <Select defaultValue={sampleMolecules[0]} sx={{ color: "white" }}>
+            <Select
+              value={selectedMolecule}
+              onChange={(e) => setSelectedMolecule(e.target.value)}
+              sx={{ color: "white" }}
+            >
               {sampleMolecules.map((item) => (
                 <MenuItem key={item} value={item}>
                   {item}
@@ -245,6 +352,7 @@ export default function EditMolecule({
               ))}
             </Select>
             <Button
+              onClick={handleShowMolecule}
               variant="outlined"
               sx={{ color: "white", borderColor: "#2ABD91", marginTop: 2 }}
             >
