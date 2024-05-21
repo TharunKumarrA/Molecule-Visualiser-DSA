@@ -21,7 +21,9 @@ async function Get_Info(compound_formula) {
         Uses: Common applications and industries where this compound is utilized.
         Safety Information: Including toxicity, handling precautions, and safety measures.
         Synthesis: A brief overview of how this compound is typically synthesized or extracted.
-        Regulatory Information: Any relevant regulatory guidelines or restrictions associated with this compound. In Markdown format, please."`;
+        Regulatory Information: Any relevant regulatory guidelines or restrictions associated with this compound. In Markdown format, please.
+        Give the above mentioned content is a neat point wise format with bold topic names
+        Add space between the properties in the markdown. Add bullet points."`;
     const result = await model.generateContent(prompt);
     const GPTresponse = result.response.candidates[0].content.parts[0].text;
     response.responseBody = GPTresponse;
