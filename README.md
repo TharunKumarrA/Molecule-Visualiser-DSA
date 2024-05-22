@@ -8,11 +8,10 @@ The construction of the molecular graph employs Breadth-First Search (BFS) to en
 
 ## Key Features
 
-* Algorithmic efficiency for real-time updates and smooth interactions.
+* Detailed information sharing about the constructed molecules **Physical** and **Chemical** Properties.
 * Bond angle calculations and molecular geometry analysis.
-* Support for various chemical formats.
-* Detailed information sharing about the molecule's properties.
-* A comprehensive tool for education and research.
+* Algorithmic efficiency for real-time updates and smooth interactions.
+
 
 
 ## Tech Stack
@@ -32,6 +31,10 @@ See `contributing.md` for ways to get started.
 
 Please adhere to this project's `code of conduct`.
 
+## API Utilized
+
+[Gemini 1.5 Flash](https://ai.google.dev/gemini-api/docs/models/gemini#gemini-1.5-flash)
+
 
 ## API Documentation
 
@@ -48,12 +51,12 @@ To run this project, you will need to add the following environment variables to
 
 ## Developers
 
-- `[Tharun Kumarr A]`(https://github.com/TharunKumarrA)
-- `[Naganathan M R]`(https://github.com/Naganathan05)
-- `[Lowkik Sai P]`(https://github.com/Lowkik-Sai)
-- `[Praveen K]`(https://github.com/Praveen20cent)
-- `[Bharath S]`(https://github.com/S-Bharath16)
-- `[Hariprasath M]`
+- `Tharun Kumarr A`
+- `Naganathan M R`
+- `Lowkik Sai P`
+- `Praveen K`
+- `Bharath S`
+- `Hariprasath M`
 
 ## Future Ideas for **Molecule Visualizer**:
 
