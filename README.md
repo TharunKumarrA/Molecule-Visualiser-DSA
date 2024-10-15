@@ -84,3 +84,20 @@ To run this project, you will need to add the following environment variables to
 #### How get properties of constructed moelcule ?
 
 * Once you have constrcuted the molecule, use the option **Get Data** available at the top left. This option when trigerred whill fetch you all the **Chemical** and **Physical** Properties of the molecule that has been constrcuted.
+
+```mermaid
+graph TD
+    A[Start] --> B[Add Atoms]
+    B --> C[Add Bond]
+    C --> D{Cycle Detection}
+    D -->|Cyclic| E[Identify Rings]
+    D -->|Acyclic| F[Proceed]
+    E --> F
+    F --> G[Calculate Bond Angles]
+    G --> H[Analyze Molecular Geometry]
+    H --> I[Get Physical/Chemical Properties]
+    I --> J[Display Results]
+    J --> K[Real-time Updates]
+    K --> L[End]
+
+```
