@@ -6,10 +6,13 @@ export default function AiSection({ compoundFormula }) {
   const [res, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const serverPort = process.env.PORT;
+  const BASE_URL = `http://localhost:${serverPort}`;
+
   const handleGetData = () => {
     setIsLoading(true);
     axios
-      .get(`http://localhost:8080/getinfo/${compoundFormula}`)
+      .get(`${BASE_URL}/getinfo/${compoundFormula}`)
       .then((response) => {
         console.log(response.data);
         setResponse(response.data);
@@ -30,7 +33,7 @@ export default function AiSection({ compoundFormula }) {
           {!res && (
             <button
               onClick={handleGetData}
-              className="flex justify-center items-center border-2 border-[#2ABD91] py-2 rounded-full mx-auto cursor-pointer px-6"
+              className="flex justify-center items-center border-2 border-[#2ABD91] py-2 rounded-full mx-auto cursor-pointer px-6 hover:bg-[#2ABD91] hover:text-black"
             >
               GET DATA
             </button>
