@@ -31,6 +31,59 @@ See `contributing.md` for ways to get started.
 
 Please adhere to this project's `code of conduct`.
 
+# Local Development:
+
+## Steps to get the Application Running at Local:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/TharunKumarrA/Molecule-Visualiser-DSA.git
+cd Molecule-Visualiser-DSA
+```
+
+### 2. Install Backend Dependencies
+
+```bash
+cd Backend
+npm install
+cd ..
+```
+
+### 3. Install Frontend Dependencies
+
+```bash
+cd molecule-visulaiser
+npm install
+cd ..
+```
+
+### 4. Configure Environment Variables
+
+> [!Important]
+> Just for the sake of security, the `.env` file is not included in the repository.
+Create a `.env` file in the root directory of the project and add the following key-value pairs. Replace placeholders with actual values. Ensure there are no spaces or quotes, and values are entered as plain text.
+
+```env
+# Server Port Number
+PORT=<PORT_IN_WHICH_YOU_WANT_THE_BACKEND_TO_RUN_IN>
+
+# API Key for Gemini 1.5 AI Model.
+API_KEY=<YOUR_SECRET_KEY>
+```
+
+
+### 5. Start the Backend Server
+
+```bash
+nodemon App.js
+```
+
+### 6. Start the Frontend Server
+
+```bash
+npm run start
+```
 ## API Utilized
 
 [Gemini 1.5 Flash](https://ai.google.dev/gemini-api/docs/models/gemini#gemini-1.5-flash)
@@ -39,14 +92,6 @@ Please adhere to this project's `code of conduct`.
 ## API Documentation
 
 [API-Reference](/Backend/README.md)
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`PORT`
-
-`API_KEY`
 
 
 ## Developers
