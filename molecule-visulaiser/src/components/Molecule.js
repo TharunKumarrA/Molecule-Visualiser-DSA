@@ -44,14 +44,11 @@ export function getCoordinates(molecule) {
   
   // Constant Angles defined for respective hybridisations.
   const angles = {
-    sp: { angleX: Math.PI, angleY: 0, angleZ: 0 },
-    sp2: { angleX: -Math.PI / 6, angleY: Math.PI / 3, angleZ: 0 },
-    sp3: {
-      angleX: 0.615 * Math.PI,
-      angleY: 0.955 * Math.PI,
-      angleZ: 0.615 * Math.PI,
-    },
-  };
+  sp: { angleX: Math.PI, angleY: 0, angleZ: 0 }, 
+  sp2: { angleX: (2 * Math.PI) / 3, angleY: (2 * Math.PI) / 3,  angleZ: (2 * Math.PI) / 3},
+  sp3: { angleX: Math.acos(-1/3),  angleY: Math.acos(-1/3),   angleZ: Math.acos(-1/3)},
+};
+
 
   // Get Central Atoms of the Molecule.
   const centralAtoms = findCentralAtoms(molecule);
