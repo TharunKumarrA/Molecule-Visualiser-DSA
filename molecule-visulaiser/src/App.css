@@ -1,24 +1,14 @@
-.markdown-container h1 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 16px;
-  }
-  
-  .markdown-container h2 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 12px;
-  }
-  
   .markdown-container p {
     margin-bottom: 12px;
     line-height: 1.6;
+    color: rgb(241, 246, 178);
   }
   
   .markdown-container ul, 
   .markdown-container ol {
     margin-left: 24px;
     margin-bottom: 12px;
+    color: rgb(238, 247, 239);
   }
   
   .markdown-container li {
