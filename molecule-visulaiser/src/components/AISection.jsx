@@ -7,8 +7,8 @@ export default function AiSection({ compoundFormula }) {
   const [res, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const serverPort = process.env.PORT;
-  const BASE_URL = `http://localhost:${serverPort}` || 5000;
+  const serverPort = process.env.PORT || 5000;  //port is not taken directly from env so i added 5000 manually
+  const BASE_URL = `http://localhost:${serverPort}`;
   console.log(BASE_URL)
 
   const handleGetData = () => {
