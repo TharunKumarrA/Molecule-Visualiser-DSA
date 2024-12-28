@@ -13,10 +13,11 @@ async function Get_Info(compound_formula) {
 
   try {
     console.log(compound_formula)
+    compound_formula='NH4+'
     const prompt = `"I need detailed information about the chemical compound ${compound_formula}.
         Please provide the following details in a clear and structured markdown format:
 
-        # {Compund formula here} it should be bold 
+        # {Compund formula here} it should be bold when rendered under react-markdown it should be in h1 tag
         1. **Chemical Name** 🧪
            -  The full chemical name
            -  the IUPAC name of the compound.
@@ -44,7 +45,8 @@ async function Get_Info(compound_formula) {
            -  restrictions associated with this compound. 
         Ensure the markdown is well-indented and uses bullet points for lists.
         Format all topic headers as bold titles using markdown syntax (**)
-        Provide an extra line break between sections for better readability"`;
+        Provide an extra line break between sections for better readability"
+        Just respond with that format output no extra messages`;
     const result = await model.generateContent(prompt);
     const GPTresponse = result.response.candidates[0].content.parts[0].text;
     response.responseBody = GPTresponse;
