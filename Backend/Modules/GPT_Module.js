@@ -12,9 +12,11 @@ async function Get_Info(compound_formula) {
   };
 
   try {
+    console.log(compound_formula)
     const prompt = `"I need detailed information about the chemical compound ${compound_formula}.
         Please provide the following details in a clear and structured markdown format:
 
+        # {Compund formula here} it should be bold 
         1. **Chemical Name** 🧪
            -  The full chemical name
            -  the IUPAC name of the compound.
