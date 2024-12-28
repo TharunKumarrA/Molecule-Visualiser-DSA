@@ -13,7 +13,6 @@ async function Get_Info(compound_formula) {
 
   try {
     console.log(compound_formula)
-    compound_formula='C6 H12 O6'
     const prompt = `"I need detailed information about the chemical compound ${compound_formula} ,If there is more isomers consider one yourself and give out response.
         Please provide the following details in a clear and structured markdown format:
          Before providing the information:
