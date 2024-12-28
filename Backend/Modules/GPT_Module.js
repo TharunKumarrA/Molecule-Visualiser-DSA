@@ -13,7 +13,6 @@ async function Get_Info(compound_formula) {
 
   try {
     console.log(compound_formula)
-    compound_formula='NH4+'
     const prompt = `"I need detailed information about the chemical compound ${compound_formula}.
         Please provide the following details in a clear and structured markdown format:
 
