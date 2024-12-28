@@ -13,6 +13,7 @@ async function Get_Info(compound_formula) {
 
   try {
     console.log(compound_formula)
+    compound_formula='C6 H12 O6'
     const prompt = `"I need detailed information about the chemical compound ${compound_formula} ,If there is more isomers consider one yourself and give out response.
         Please provide the following details in a clear and structured markdown format:
          Before providing the information:
@@ -49,7 +50,7 @@ async function Get_Info(compound_formula) {
         Ensure the markdown is well-indented and uses bullet points for lists.
         Format all topic headers as bold titles using markdown syntax (**)
         Provide an extra line break between sections for better readability"
-        Just respond with that format output no extra messages`;
+        Just respond with that format and no html tags in output and no extra messages`;
     const result = await model.generateContent(prompt);
     const GPTresponse = result.response.candidates[0].content.parts[0].text;
     response.responseBody = GPTresponse;
