@@ -13,30 +13,34 @@ async function Get_Info(compound_formula) {
 
   try {
     console.log(compound_formula)
-    const prompt = `"I need detailed information about the chemical compound ${compound_formula}.
+    const prompt = `"I need detailed information about the chemical compound ${compound_formula} ,If there is more isomers consider one yourself and give out response.
         Please provide the following details in a clear and structured markdown format:
+         Before providing the information:
+         - **validate** the compound formula.
+         - If the compound is not found or does not exist, **return the following message**: "The chemical compound '${compound_formula}' could not be identified. Please verify the formula or provide a more specific name."
+         - If the compound is recognized, provide the details in the following clear and structured markdown format:
 
         # {Compund formula here} it should be bold when rendered under react-markdown it should be in h1 tag
         1. **Chemical Name** 🧪
-           -  The full chemical name
-           -  the IUPAC name of the compound.
+           -  **The Chemical name** :
+           -  **the IUPAC name :**. of compund
         2. **Physical Properties** 
-           -  melting point ❄️
-           -  boiling point ♨️
-           -  density ⚖️
-           -  solubility 🌊
-           -  state at room temperature 🏠
+           -  **Melting point** ❄️
+           -  **Boiling point** ♨️
+           -  **Density** ⚖️
+           -  **Solubility** 🌊
+           -  **State at room temperature** 🏠
         3. **Chemical Properties** ⚗️
-           -  Reactivity 💥
-           -  pH
-           -  stability
-           -  any known reactions.
+           -  **Reactivity** 💥
+           -  **pH**
+           -  **stability**
+           -  **known Chemical reactions**.
         4. **Uses** 🏭
            -  Common applications and industries where this compound is utilized.
         5. **Safety Information** ⚠️
-           -  Including toxicity ☠️
-           -  handling precautions 🧤
-           -  safety measures 🛡️
+           -  **Including toxicity** ☠️
+           -  **handling precautions** 🧤
+           -  **safety measures** 🛡️
         6. **Synthesis** 🛠️
            -  A brief overview of how this compound is typically synthesized or extracted.
         7. **Regulatory Information** 📜
