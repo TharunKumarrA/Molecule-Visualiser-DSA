@@ -22,4 +22,23 @@
       -ms-overflow-style: none;  /* IE and Edge */
       scrollbar-width: none;  /* Firefox */
 }
+.markdown-container p {
+    @apply mb-3   text-yellow-100;
+  }
+  .markdown-container h1 {
+    @apply mb-3 text-blue-100 text-center text-xl;
+  }
+
+  .markdown-container ul,
+  .markdown-container ol {
+    @apply ml-2 mb-1 text-green-100;    
+  }
+
+  .markdown-container li {
+    @apply mb-1;
+  }
+
+  .markdown-container strong {
+    @apply font-bold;
+  }
 }
