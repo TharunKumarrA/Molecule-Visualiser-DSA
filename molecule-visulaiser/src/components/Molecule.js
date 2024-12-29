@@ -356,10 +356,14 @@ function calculateVector120DegreesOnPlane(
   return vector120Degrees;
 }
 
-function findFourthCoordinate(p1, p2, p3, angle = 109) {
+function findFourthCoordinate(p1, p2, p3, angle = 109.5) {
+  // Convert the bond angle to radians
+  const newAngle = (angle * Math.PI) / 180;
+
   // Calculate the normal vector of the plane formed by the three given points
   const v1 = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]];
   const v2 = [p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]];
+
   const normal = [
     v1[1] * v2[2] - v1[2] * v2[1],
     v1[2] * v2[0] - v1[0] * v2[2],
@@ -371,40 +375,32 @@ function findFourthCoordinate(p1, p2, p3, angle = 109) {
     normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2
   );
   const normalizedNormal = normal.map((x) => x / normalLength);
-  // Calculate the angle between the normal vector and the z-axis
-  const angleWithZAxis = Math.acos(normalizedNormal[2]);
 
-  // Calculate the rotation axis as the cross product of the normal vector and the z-axis
-  const rotationAxis = [-normalizedNormal[1], normalizedNormal[0], 0];
-  // Calculate the rotation quaternion
-  const rotationAngle =
-    (angleWithZAxis + (angle * Math.PI) / 180) % (2 * Math.PI);
-  const rotationQuaternion = [
-    Math.cos(rotationAngle / 2),
-    rotationAxis[0] * Math.sin(rotationAngle / 2),
-    rotationAxis[1] * Math.sin(rotationAngle / 2),
-    rotationAxis[2] * Math.sin(rotationAngle / 2),
+  // Calculate the center point of the plane formed by three vectors
+  const centerPoint = [
+    (p1[0] + p2[0] + p3[0]) / 3,
+    (p1[1] + p2[1] + p3[1]) / 3,
+    (p1[2] + p2[2] + p3[2]) / 3,
   ];
 
-  // Rotate the z-axis by the calculated rotation quaternion
-  const rotatedZAxis = [
-    rotationQuaternion[0] ** 2 +
-      rotationQuaternion[1] ** 2 -
-      rotationQuaternion[2] ** 2 -
-      rotationQuaternion[3] ** 2,
-    2 *
-      (rotationQuaternion[1] * rotationQuaternion[2] -
-        rotationQuaternion[0] * rotationQuaternion[3]),
-    2 *
-      (rotationQuaternion[1] * rotationQuaternion[3] +
-        rotationQuaternion[0] * rotationQuaternion[2]),
+  // Bond length defined here, can be tailored to our need
+  const bondLength = 1;
+  // Scaling the normal vector to match the bond length
+  const scaledNormal = normalizedNormal.map((x) => x * bondLength);
+
+  // Adjusting the position of the fourth point using the bond angle
+  const newNormal = scaledNormal.map((x) => x * Math.cos(newAngle / 2));
+
+  // Calculate the fourth point, will aproximately be in the opposite to the plane
+  const fourthPoint = [
+    centerPoint[0] - newNormal[0],
+    centerPoint[1] - newNormal[1],
+    centerPoint[2] - newNormal[2],
   ];
 
-  // Scale the rotated z-axis to a desired length (e.g., 1)
-  const desiredLength = 1;
-  const fourthCoordinate = rotatedZAxis.map((x) => x * desiredLength);
-  return fourthCoordinate;
+  return fourthPoint;
 }
+
 
 function findThirdCoordinate(p1, p2, angle = 109) {
   // Calculate the vector between the two given points
