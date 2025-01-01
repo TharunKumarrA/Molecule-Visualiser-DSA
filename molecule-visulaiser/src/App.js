@@ -23,6 +23,8 @@ const MoleculeVisualizer = () => {
     H: 0,
     O: 0,
     N: 0,
+    S: 0,
+    F: 0,
   });
 
   const [compoundFormula, setCompoundFormula] = useState("");
@@ -297,6 +299,8 @@ const MoleculeVisualizer = () => {
     { value: "H", label: "H" },
     { value: "O", label: "O" },
     { value: "N", label: "N" },
+    { value: "S", label: "S" },
+    { value: "F", label: "F" },
   ];
 
   const getBondMenuItems = () => {
@@ -315,7 +319,7 @@ const MoleculeVisualizer = () => {
     return bondMenuItems;
   };
 
-  const sampleMolecules = ["CH4", "C2H6", "C6H6", "H2O"];
+  const sampleMolecules = ["CH4", "C2H6", "C6H6", "H2O", "SF6"];
 
   return (
     <div className="flex flex-col h-screen bg-[#141414] font-inter">
