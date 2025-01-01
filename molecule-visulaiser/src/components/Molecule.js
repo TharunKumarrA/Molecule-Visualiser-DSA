@@ -8,7 +8,14 @@ export function addAtoms(molecule, atom) {
   molecule.addAtoms(atom);
 }
 
-export function addBonds(molecule, atom1Name, atom2Name, isSingleBond, isDoubleBond, isTripleBond) {
+export function addBonds(
+  molecule,
+  atom1Name,
+  atom2Name,
+  isSingleBond,
+  isDoubleBond,
+  isTripleBond
+) {
   const atom1 = molecule.atomList.find((atom) => atom.atomName === atom1Name);
   const atom2 = molecule.atomList.find((atom) => atom.atomName === atom2Name);
 
@@ -39,9 +46,83 @@ export function findCentralAtoms(molecule) {
   return centralAtoms;
 }
 
-// Calculate Coordiantes of the atoms in 3D Plane.
-export function getCoordinates(molecule) {
+
+
+function calcSp3d2bondDirection(parentAtom, currentAtom) {
+  if (!parentAtom || !parentAtom.coordinates) {
+      console.error("Invalid parent atom");
+      return [1, 0, 0];
+  }
+
+  const existingBonds = (parentAtom.bonds || [])
+      .filter(bond => bond.atomEnd && bond.atomEnd !== currentAtom)
+      .map(bond => {
+          if (!bond.atomEnd.coordinates) return null;
+          // Calculate direction using existing coordinates
+          return normalizeVector([
+              bond.atomEnd.coordinates[0] - parentAtom.coordinates[0],
+              bond.atomEnd.coordinates[1] - parentAtom.coordinates[1],
+              bond.atomEnd.coordinates[2] - parentAtom.coordinates[2]
+          ]);
+      })
+      .filter(dir => dir !== null);
+
+  if (existingBonds.length === 0) {
+      return [1, 0, 0];
+  }
+
+  if (existingBonds.length === 1) {
+      return [-1, 0, 0];
+  }
+
+  if (existingBonds.length === 2) {
+      return [0, 1, 0];
+  }
+  if (existingBonds.length === 3) {
+      return [0, -1, 0];
+  }
+
+  if (existingBonds.length === 4) {
+      return [0, 0, 1];
+  }
+  if (existingBonds.length === 5) {
+      return [0, 0, -1];
+  }
+
+  return [1, 0, 0]; 
+}
+
+// Helper function for vector normalization 
+function normalizeVector(vector) {
+  const magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2]);
+  return magnitude === 0 ? vector : vector.map(component => component / magnitude);
+}
+
+function validatePlanarArrangement(bonds) {
+  if (bonds.length < 4) return false;
   
+  const planarBonds = bonds.slice(0, 4);
+  return planarBonds.every(bond => Math.abs(bond[2]) < 0.1);
+}
+
+function getPlaneNormal(bonds) {
+  if (bonds.length < 2) return [0, 0, 1];
+  
+  const v1 = bonds[0];
+  const v2 = bonds[1];
+  
+  return normalizeVector([
+      v1[1] * v2[2] - v1[2] * v2[1],
+      v1[2] * v2[0] - v1[0] * v2[2],
+      v1[0] * v2[1] - v1[1] * v2[0]
+  ]);
+}
+
+export function getCoordinates(molecule) {
+  if (!molecule || !molecule.coordinates || molecule.coordinates.length < 3) {
+    console.error("Invalid molecule or coordinates:", molecule);
+    return null; // or a default value, e.g., [0, 0, 0]
+}
   // Constant Angles defined for respective hybridisations.
   const angles = {
     sp: { angleX: Math.PI, angleY: 0, angleZ: 0 },
@@ -50,6 +131,12 @@ export function getCoordinates(molecule) {
       angleX: 0.615 * Math.PI,
       angleY: 0.955 * Math.PI,
       angleZ: 0.615 * Math.PI,
+    },
+    //octahedral geometry.
+    sp3d2: {
+      angleX: Math.PI / 2,
+      angleY: Math.PI / 2,
+      angleZ: Math.PI / 2,
     },
   };
 
@@ -176,6 +263,19 @@ export function getCoordinates(molecule) {
                 firstCoordinate,
                 secondCoordinate
               );
+            if (parentAtom.hybridisation === "sp3d2") {
+              newDirection = calcSp3d2bondDirection(parentAtom, currentAtom);
+              directionVectorStack.push(newDirection);
+
+              // i implemented the new coordinatess inside the sp3d2 section
+              const newCoordinates = [
+                parentCoordinates[0] + bondlength * newDirection[0],
+                parentCoordinates[1] + bondlength * newDirection[1],
+                parentCoordinates[2] + bondlength * newDirection[2],
+              ];
+              currentAtom.coordinates = newCoordinates;
+              continue;
+            }
             directionVectorStack.push(newDirection);
 
             console.log("New Direction:", newDirection);
